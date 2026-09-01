@@ -1,0 +1,26 @@
+# env
+.env
+.env.*
+!.env.example
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# node
+node_modules/
+dist/
+
+# runtime
+backend/media/*
+!backend/media/.keep
+*.log
+
+# tools
+.claude/
+.mcp.json
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/image.png" />
+    <script
+      type="text/javascript"
+      src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+    ></script>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0 viewport-fit=cover"
+    />
+    <meta
+      name="google-site-verification"
+      content="SSOrBFGM1wDHl7KnX65LrsxSM-2acoSjtc_4mhsY-uM"
+    />
+    <title>BASE</title>
+    <script>
+      // React 마운트 전에 테마를 적용해서 첫 페인트 깜빡임을 막는다
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          var dark =
+            saved === "dark" ||
+            (!saved &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.classList.add("dark");
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

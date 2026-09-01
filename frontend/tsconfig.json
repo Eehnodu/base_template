@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./src/*"],
+      "container/*": ["./src/container/*"]
+    },
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false
+  }
+}
