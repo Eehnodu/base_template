@@ -9,6 +9,8 @@ certifi==2026.2.25
 cffi==2.0.0
 click==8.3.1
 colorama==0.4.6
+# MySQL 8 기본 인증(caching_sha2_password) 에 필요. 없으면 접속 자체가 RuntimeError 로 끊긴다
+cryptography==50.0.1
 distro==1.9.0
 fastapi==0.135.2
 greenlet==3.3.2

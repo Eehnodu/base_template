@@ -2,6 +2,10 @@
 
 템플릿은 파생 프로젝트에서 검증된 변경을 되가져오는 방식으로 갱신합니다. 날짜별로 무엇을 왜 바꿨는지만 적습니다.
 
+## 2026-09-22
+
+- `cryptography` 를 requirements 에 추가. MySQL 8 의 기본 인증 방식(`caching_sha2_password`) 은 pymysql/aiomysql 단독으로 처리하지 못해, 없으면 DB 접속 자체가 `RuntimeError` 로 끊긴다. 그동안은 다른 패키지에 딸려 우연히 설치돼 있었을 뿐이라, 새 PC 에서 `pip install -r requirements.txt` 만 하면 모든 API 가 500 이 됐다.
+
 ## 2026-09-17
 
 - 관리자 사이드바 접힘 · 펼침 전환 중 반대쪽 hover 토글이 잠깐 비치던 문제. 전환 시간 동안 토글을 그리지 않는다.
