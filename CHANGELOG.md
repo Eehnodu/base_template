@@ -4,6 +4,7 @@
 
 ## 2026-09-22
 
+- 빈 리비전 자동 삭제가 작동하지 않던 문제. alembic 템플릿이 `upgrade`/`downgrade` 마다 docstring 을 넣기 시작하면서, 내용 판정이 docstring 을 본문으로 세어 빈 리비전도 "내용 있음" 이 됐다. 판정에서 주석과 함께 docstring 도 제외한다. 그동안 모델 변경 없이 `migrate.sh` 를 돌릴 때마다 빈 리비전이 쌓이고 DB 에 그대로 적용되고 있었다.
 - `cryptography` 를 requirements 에 추가. MySQL 8 의 기본 인증 방식(`caching_sha2_password`) 은 pymysql/aiomysql 단독으로 처리하지 못해, 없으면 DB 접속 자체가 `RuntimeError` 로 끊긴다. 그동안은 다른 패키지에 딸려 우연히 설치돼 있었을 뿐이라, 새 PC 에서 `pip install -r requirements.txt` 만 하면 모든 API 가 500 이 됐다.
 
 ## 2026-09-17

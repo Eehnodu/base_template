@@ -32,7 +32,10 @@ src = open(sys.argv[1], encoding="utf-8").read()
 def body_is_empty(name: str) -> bool:
     m = re.search(rf"def {name}\(\).*?:\n(.*?)(?=\ndef |\Z)", src, re.S)
     body = m.group(1) if m else ""
-    lines = [l.strip() for l in body.splitlines() if l.strip() and not l.strip().startswith("#")]
+    # 주석과 docstring 은 내용으로 세지 않는다. alembic 템플릿이 함수마다
+    # """Upgrade schema.""" 를 넣기 때문에, 빼지 않으면 빈 리비전도 '내용 있음' 으로 판정된다
+    skip = ("#", '"""', "'''")
+    lines = [l.strip() for l in body.splitlines() if l.strip() and not l.strip().startswith(skip)]
     return lines == ["pass"]
 
 sys.exit(0 if body_is_empty("upgrade") and body_is_empty("downgrade") else 1)
