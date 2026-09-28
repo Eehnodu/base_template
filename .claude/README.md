@@ -50,13 +50,14 @@
 
 리뷰 · 감사의 finding 형식과 심각도는 `skills/review/references/finding-format.md` 하나를 셋이 공유한다.
 
-## 훅 6개
+## 훅 7개
 
 | 스크립트 | 이벤트 | 하는 일 | 걸리면 |
 | -------- | ------ | ------- | ------ |
 | `session_context.py` | SessionStart | 브랜치 · 변경 파일 · 마지막 검증 · TODO "진행 중"을 주입 | 없음 (정보만) |
 | `block_sensitive_edits.py` | PreToolUse Edit · Write | `.env`류 · 키 · `secrets/` · `alembic/versions` · lock 파일 수정 | 차단 + 대체 행동 안내 |
 | `block_dangerous_bash.py` | PreToolUse Bash · PowerShell | `rm -rf` · `reset --hard` · 강제 푸시 · `DROP` · `downgrade` 등 11패턴 | 승인창. 예외: 대상이 전부 Claude 스크래치 절대 경로인 `rm -rf`는 통과 |
+| `ask_paid_api.py` | PreToolUse Bash · PowerShell | 명령 본문과 실행하는 스크립트 파일에서 유료 생성 API 호출(Gemini 이미지 · Lyria · Veo, Stability, ElevenLabs, OpenAI 이미지 · 오디오)을 찾음. 모델 목록 조회 같은 무료 호출은 통과 | 승인창 (CLAUDE.md 원칙 12) |
 | `check_touched_file.py` | PostToolUse Edit · Write | 고친 파일 하나만 문법 · 규칙(any · HTTPException · 고정색 등) 검사 | 위반 목록 + 심각도 |
 | `check_verify_before_stop.py` | Stop | 코드를 고치고 `/verify` 없이 끝내려 하면 | 알림 |
 | `mark_verified.py` | (훅 아님) | verifier가 검증 뒤 마커 기록 | |

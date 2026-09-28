@@ -2,6 +2,11 @@
 
 템플릿은 파생 프로젝트에서 검증된 변경을 되가져오는 방식으로 갱신합니다. 날짜별로 무엇을 왜 바꿨는지만 적습니다.
 
+## 2026-09-29
+
+- Claude 작업 규칙 추가 (`CLAUDE.md` 원칙 12~14): 과금되는 외부 API는 모델 · 횟수 · 금액을 말하고 허락받은 뒤 호출, 이모지 금지, git 명령은 파이프 없이 단독. 완료 보고에서 규칙 · 설정 · 문서 변경은 이전 · 이후 표로.
+- 훅 `ask_paid_api.py`: 명령이나 실행하는 스크립트에 유료 생성 API(Gemini 이미지 · Lyria · Veo, Stability, ElevenLabs, OpenAI 이미지 · 오디오) 호출이 있으면 실행 전에 승인창을 띄운다. 무료 호출은 통과.
+
 ## 2026-09-28
 
 - Claude Code 설정 포함. `.claude/`(규칙 6 · 스킬 16 · 에이전트 11 · 훅 6 · 권한), `CLAUDE.md`, `zz_claude_guide.md`, `zz_docs/` 뼈대. 구성과 흐름은 `.claude/README.md`. 새 프로젝트에서 `/feature` · `/design` · `/fullstack` · `/fix` · `/verify` · `/review`를 바로 쓸 수 있다.

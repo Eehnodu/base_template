@@ -277,16 +277,17 @@ CLAUDE.md(규칙) → rules(주제별 규칙) → skills(절차) → agents(역�
 
 | 책 기준 | base 적용 |
 | ------- | --------- |
-| 처음엔 차단보다 관찰 · 경고. 삭제 · 배포 · 외부 전송은 자동 실행 금지 | 적용 — 훅 5개(이벤트 4종, 스크립트 6개) 모두 검사 · 알림 · 승인 요청만. 파일을 되돌리거나 명령을 실행하지 않는다 |
+| 처음엔 차단보다 관찰 · 경고. 삭제 · 배포 · 외부 전송은 자동 실행 금지 | 적용 — 훅 6개(이벤트 4종, 스크립트 7개) 모두 검사 · 알림 · 승인 요청만. 파일을 되돌리거나 명령을 실행하지 않는다 |
 | PreToolUse — 민감 파일 수정 차단, `.env.example`은 허용, Windows 경로 정규화 (076 · 078) | 적용 — `block_sensitive_edits.py` (Edit\|Write) — `.env`류 · `.pem` · `.key` · `secrets/` · `alembic/versions/*.py` · lock 파일. 메시지에 "왜 + 대신 할 일" |
 | `permissions.deny`와 훅은 함께 쓴다 (078) | 적용 — deny가 막고, 훅이 이유 · 대체 행동을 붙인다 |
 | PostToolUse — 수정된 파일만, 짧고 결정적, 스크립트 안에서도 범위 축소 (077 · 079) | 적용 — `check_touched_file.py` — 고친 파일 하나만 1초 안에 검사 (py_compile, 규칙 grep, 심각도). `node_modules` · `dist` · `.claude` · 문서 폴더 제외. 포맷터는 프로젝트에 설정이 없어 보류 |
 | Stop — 검증 없이 끝내려 하면 알림, 마커 파일, 미실행 사유 (080) | 적용 — `check_verify_before_stop.py` + `mark_verified.py`(verifier가 기록). `stop_hook_active`로 반복 방지. 코드 파일이 바뀐 경우만 |
 | PreToolUse — 위험 명령 승인 (076) | 적용 — `block_dangerous_bash.py` (Bash\|PowerShell) — 강제 삭제 · `reset --hard` · `checkout -- .` · `clean -f` · 강제 푸시 · `branch -D` · `alembic downgrade` · `DROP/TRUNCATE` · `npm audit fix --force`. 걸리면 `permissionDecision: "ask"` → 그 명령만 승인 프롬프트(auto 모드에서도). 처음엔 exit 2로 차단하고 "사용자가 직접 실행"이었으나, 명령을 손으로 옮겨 치게 만드는 것보다 승인 한 번이 맞아서 바꿈. 예외 하나: `rm -rf` 대상이 **전부 절대 경로로 Claude 스크래치**(`…/AppData/Local/Temp/claude/…`, `/tmp/claude/…`) 아래면 통과 — `/explore` 클론 정리용. 상대 경로 · 스크래치 루트 자체 · 다른 위험 명령과 섞임은 여전히 승인. git 플래그는 대소문자 구분(`-d`는 허용) |
+| PreToolUse — 유료 API 승인 (사용자 선호, 2026-09-29) | 적용 — `ask_paid_api.py` (Bash\|PowerShell) — 명령 본문과 실행하는 스크립트(.py · .js 등) 내용에서 유료 생성 API 호출을 찾으면 `permissionDecision: "ask"`. Gemini는 주소 + 생성 호출 + 과금 모델(lyria · imagen · *-image · veo)이 모두 있어야 걸려서 모델 목록 조회는 통과. `.claude/hooks/` 파일은 검사 제외(패턴 문자열 때문에 자기 자신을 오인). 규칙 문장(CLAUDE.md 원칙 12)만으로는 한 번 어겨서 강제 장치를 둠. 샘플 7건 테스트 |
 | SessionStart — 세션 시작 시 진행 상태 주입 (075, Superpowers 방식) | 적용 — `session_context.py` (startup\|clear\|compact) — 브랜치 · 변경 파일 · 마지막 검증 마커 · TODO "진행 중"을 additionalContext로. 규칙 재주입은 안 함 (CLAUDE.md가 컴팩션 뒤 다시 로드됨) |
 | 명령 로그 + redaction (081) | 보류 — 2단계 — 필요가 생기면. `.gitignore`엔 미리 넣어 둠 |
 | 훅 명령 경로는 `"$CLAUDE_PROJECT_DIR"` 절대 경로 (공식 문서 패턴) | 적용 — **사고 후 수정** — 상대 경로(`python .claude/hooks/x.py`)로 두면 세션 셸이 `cd frontend`한 순간 훅이 파일을 못 찾고 Python이 exit 2를 내서 **Bash · Edit · Write 전부 차단**, 그걸 고치는 Edit도 막힘. 사용자가 settings.json을 직접 고쳐서 풀었다. 훅 스크립트는 "파일 없음"과 "차단"을 같은 exit 2로 내므로 경로가 절대여야 한다 |
-| 스크립트는 짧게, 비밀정보 출력 금지, 샘플 입력으로 허용 · 차단 모두 테스트, 끄는 방법 문서화 (082) | 적용 — 스크립트 6개(37~102줄), 샘플 JSON으로 테스트, CLAUDE.md 원칙 10에 끄는 방법. Windows 콘솔 인코딩 때문에 stdout · stderr를 UTF-8로 고정 |
+| 스크립트는 짧게, 비밀정보 출력 금지, 샘플 입력으로 허용 · 차단 모두 테스트, 끄는 방법 문서화 (082) | 적용 — 스크립트 7개(37~120줄), 샘플 JSON으로 테스트, CLAUDE.md 원칙 10에 끄는 방법. Windows 콘솔 인코딩 때문에 stdout · stderr를 UTF-8로 고정 |
 
 ## MCP — 2단계 (083~091, 110)
 
