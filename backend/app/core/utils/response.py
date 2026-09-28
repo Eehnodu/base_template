@@ -1,4 +1,3 @@
-# 역할: 응답 포맷 통일. 성공은 success(), 실패는 fail() 로 예외를 던져 전역 핸들러가 같은 형식으로 만든다
 from typing import Any, Optional
 
 from fastapi import HTTPException
@@ -6,7 +5,6 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 
-# 프론트 useAPI 의 BaseResponse<T> 와 필드가 1:1 로 맞는다. errorCode 는 프론트 분기용
 class BaseResponse(BaseModel):
     success: bool
     message: str
@@ -44,6 +42,6 @@ def fail(
         status_code=status_code,
         detail=message,
     )
-    # HTTPException 에는 error_code 필드가 없어 동적으로 붙이고, 핸들러가 getattr 로 꺼낸다
-    setattr(exc, "error_code", error_code)
+    if error_code is not None:
+        setattr(exc, "error_code", error_code)
     raise exc

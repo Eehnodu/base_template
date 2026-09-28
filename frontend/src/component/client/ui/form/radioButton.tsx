@@ -51,7 +51,7 @@ const RadioButton = ({
         className={`
           ${sizeStyles.radio}
           accent-primary
-          border-gray-400
+          border-line-strong
         `}
       />
 

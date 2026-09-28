@@ -1,16 +1,13 @@
-// 역할: 음성 대화용 WebSocket 훅. 마이크 PCM 을 서버로 흘리고, 돌아오는 STT/GPT 텍스트와 TTS 오디오를 재생한다
 import { useRef } from "react";
 import { baseURL } from "./useAPI";
 
-// realtime: 서버가 PCM16 을 조각으로 스트리밍 → Web Audio 로 즉시 재생
-// legacy  : 완성된 MP3 한 덩어리 → <audio> 로 재생
 type Mode = "realtime" | "legacy";
 
 interface AudioWsProps {
   mode?: Mode;
   onConnect?: (sessionId: string) => void;
   onDisconnect?: () => void;
-  onSttText?: (text: string, isPartial?: boolean) => void; // isPartial: 중간 결과면 마지막 줄을 덮어쓴다
+  onSttText?: (text: string, isPartial?: boolean) => void;
   onGptText?: (text: string, isPartial?: boolean) => void;
   onTtsStart?: () => void;
   onTtsEnd?: () => void;
@@ -39,7 +36,6 @@ export const useAudioWs = (props: AudioWsProps = {}) => {
   const connect = async (chatbot_id: number = 1) => {
     if (wsRef.current && wsRef.current.readyState === WS_OPEN) return;
 
-    // http(s) → ws(s) 로 스킴만 바꿔 같은 백엔드에 붙는다. 인증 쿠키는 핸드셰이크에 자동으로 실린다
     const wsUrl = baseURL.replace(/^http/, "ws") + "/api/ws/";
     const sessionId = crypto.randomUUID();
     sessionIdRef.current = sessionId;
@@ -171,7 +167,6 @@ export const useAudioWs = (props: AudioWsProps = {}) => {
     });
     mediaStreamRef.current = stream;
 
-    // ScriptProcessor 는 폐기 예정이라 AudioWorklet 사용. 리샘플과 PCM16 변환을 오디오 스레드에서 처리한다
     try {
       await ctx.audioWorklet.addModule("/audio/resamplePcmProcessor.js");
     } catch (err) {
@@ -309,8 +304,7 @@ export const useAudioWs = (props: AudioWsProps = {}) => {
     );
   };
 
-  // 서버에서 온 PCM16(24kHz) 버퍼 재생 (realtime).
-  // Int16 → Float32(-1~1) 로 바꾸고, 서버 샘플레이트에 맞춘 전용 AudioContext 를 써 리샘플 왜곡을 피한다
+  // 서버에서 온 PCM16(24kHz) 버퍼 재생 (realtime)
   const playPcm16 = async (buf: ArrayBuffer) => {
     if (!playbackCtxRef.current) {
       playbackCtxRef.current = new AudioContext({ sampleRate: 24000 });

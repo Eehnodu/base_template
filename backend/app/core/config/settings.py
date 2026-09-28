@@ -1,4 +1,4 @@
-# 역할: .env 로딩과 local/prod 자동 판별. 나머지 코드는 settings 객체만 바라본다
+# app/core/config/settings.py
 import os
 import socket
 from pathlib import Path
@@ -8,7 +8,6 @@ from urllib.parse import quote_plus
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-# .env 를 그대로 옮긴 원본 값. local_/prod_ 접두사로 두 환경 값을 한 파일에 함께 둔다
 class RawEnv(BaseSettings):
     # MySQL 설정
     mysql_port: int = 3306
@@ -52,10 +51,12 @@ class RawEnv(BaseSettings):
     prod_redis_port: int
     prod_redis_password: Optional[str]
 
+    # 운영 CORS 허용 주소 (쉼표 구분) · 쿠키 도메인
+    prod_cors_origins: Optional[str] = None
+    prod_cookie_domain: Optional[str] = None
+
     model_config = SettingsConfigDict(env_file=os.path.join(os.path.dirname(__file__), "..", "..", "..", ".env"), env_file_encoding="utf-8")
 
-# env 에 맞는 접두사를 골라 RawEnv 값을 꺼내 주는 얇은 래퍼.
-# 호출부는 settings.mysql_host 처럼 환경을 모르고 쓴다
 class Settings:
     def __init__(self):
         self.raw = RawEnv()
@@ -68,8 +69,8 @@ class Settings:
         """
         실행 환경 판별
 
-        EC2 인스턴스는 호스트명이 ip-10-0-1-23 / ec2-1-2-3-4 형태로 잡히므로
-        별도 설정 없이 배포 서버를 prod 로 인식한다. APP_ENV 를 지정하면 그 값을 우선한다.
+        EC2 인스턴스는 호스트명이 ip-10-0-1-23 / ec2-1-2-3-4 형태로 잡힌다.
+        APP_ENV 를 지정하면 그 값을 우선한다.
         """
         override = os.getenv("APP_ENV")
         if override in ("local", "prod"):
@@ -80,7 +81,7 @@ class Settings:
             return "prod"
         return "local"
 
-    # MySQL 설정 — 환경 접두사를 붙여 RawEnv 필드를 찾는다 (local_mysql_user / prod_mysql_user)
+    # MySQL 설정
     @property
     def mysql_user(self) -> str:
         return getattr(self.raw, f"{self.env}_mysql_user")
@@ -101,7 +102,7 @@ class Settings:
     def mysql_port(self) -> int:
         return self.raw.mysql_port
 
-    # SQLAlchemy용 비동기 DB URL. 비밀번호에 특수문자가 있어도 URL 이 깨지지 않도록 quote_plus
+    # SQLAlchemy용 비동기 DB URL
     @property
     def database_url(self) -> str:
         user = quote_plus(self.mysql_user)
@@ -137,7 +138,19 @@ class Settings:
     def kakao_redirect_uri(self) -> Optional[str]:
         return getattr(self.raw, f"{self.env}_kakao_redirect_uri")
 
-    # Redis 도 DB 와 같이 환경 접두사(local_/prod_)로 값을 고른다
+    @property
+    def google_client_id(self) -> Optional[str]:
+        return self.raw.google_client_id    
+    
+    @property
+    def google_client_secret(self) -> Optional[str]:
+        return self.raw.google_client_secret    
+    
+    @property
+    def google_redirect_uri(self) -> str:
+        return getattr(self.raw, f"{self.env}_google_redirect_uri")
+
+    # Redis
     @property
     def redis_host(self) -> str:
         return getattr(self.raw, f"{self.env}_redis_host")
@@ -150,17 +163,17 @@ class Settings:
     def redis_password(self) -> Optional[str]:
         return getattr(self.raw, f"{self.env}_redis_password")
 
+    # CORS · 쿠키
     @property
-    def google_client_id(self) -> Optional[str]:
-        return self.raw.google_client_id    
-    
+    def cors_origins(self) -> List[str]:
+        if self.env == "prod":
+            raw = self.raw.prod_cors_origins or ""
+            return [o.strip() for o in raw.split(",") if o.strip()]
+        return ["http://localhost:3000", "http://127.0.0.1:3000"]
+
     @property
-    def google_client_secret(self) -> Optional[str]:
-        return self.raw.google_client_secret    
-    
-    @property
-    def google_redirect_uri(self) -> str:
-        return getattr(self.raw, f"{self.env}_google_redirect_uri")
+    def cookie_domain(self) -> Optional[str]:
+        return self.raw.prod_cookie_domain if self.env == "prod" else None
 
 # 전역 인스턴스
 settings = Settings()

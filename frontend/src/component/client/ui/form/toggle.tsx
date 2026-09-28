@@ -22,7 +22,6 @@ const Toggle = ({
 }: ToggleProps) => {
   const [internalChecked, setInternalChecked] = useState(defaultChecked);
 
-  // checked 가 주어지면 Controlled, 아니면 defaultChecked 로 시작하는 내부 상태를 쓴다
   const isControlled = checked !== undefined;
   const isOn = isControlled ? checked : internalChecked;
 
@@ -51,7 +50,7 @@ const Toggle = ({
       className={`
         relative flex items-center rounded-full transition-colors
         ${sizes[size]}
-        ${isOn ? "bg-primary" : "bg-gray-300"}
+        ${isOn ? "bg-primary" : "bg-line-strong"}
         ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
         ${className}
       `}

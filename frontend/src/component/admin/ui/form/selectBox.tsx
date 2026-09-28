@@ -1,4 +1,3 @@
-// 역할: 커스텀 드롭다운. 바깥 클릭으로 닫히고, 목록 높이는 size 별 기본값 또는 listMaxHeight 를 따른다
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -26,7 +25,7 @@ interface SelectBoxProps {
   size?: Size;
   position?: Position;
   disabled?: boolean;
-  listMaxHeight?: string;
+  listMaxHeight?: string; // 추가된 Prop
 }
 
 const SelectBox = ({
@@ -38,7 +37,7 @@ const SelectBox = ({
   size = "md",
   position = "bottom",
   disabled = false,
-  listMaxHeight,
+  listMaxHeight, // 기본값을 여기서 주지 않고 아래 로직에서 처리
 }: SelectBoxProps) => {
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement | null>(null);
@@ -76,7 +75,6 @@ const SelectBox = ({
   const selectedOption = options.find((o) => o.value === value);
   const popupPosition = position === "top" ? "bottom-full mb-1 left-0" : "top-full mt-1 left-0";
 
-  // 바깥 클릭 감지. document 에 mousedown 을 걸어 다른 요소가 click 전파를 막아도 닫힌다
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (boxRef.current && !boxRef.current.contains(e.target as Node)) {
@@ -134,7 +132,7 @@ const SelectBox = ({
                 className={[
                   sizeStyles.item,
                   "w-full text-center transition-colors",
-                  value === opt.value ? "bg-sub1 text-white font-semibold" : "hover:bg-main/5 text-main",
+                  value === opt.value ? "bg-sub1 text-white font-semibold" : "hover:bg-bg-hover text-text-main",
                 ].join(" ")}
               >
                 {opt.label}

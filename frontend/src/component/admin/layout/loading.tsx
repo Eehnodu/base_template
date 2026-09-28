@@ -1,8 +1,6 @@
-// 역할: 전체 화면 로딩 오버레이
 import { useEffect } from "react";
 
 const Loading = () => {
-  // 로딩 중 뒤 화면 스크롤을 막고, 언마운트 시 원복
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -17,7 +15,7 @@ const Loading = () => {
   const INNER_OFFSET = 58; // 이 값이 '간격'에 가장 큰 영향 줌 (낮출수록 간격 커짐)
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-overlay/50 flex items-center justify-center">
       <div className="relative" style={{ width: SIZE, height: SIZE }}>
         {Array.from({ length: NEEDLES }).map((_, i) => (
           <span

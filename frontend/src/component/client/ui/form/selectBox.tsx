@@ -1,4 +1,3 @@
-// 역할: 커스텀 드롭다운. 바깥 클릭으로 닫히고, 목록 높이는 size 별 기본값 또는 listMaxHeight 를 따른다
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -65,7 +64,6 @@ const SelectBox = ({
   const selectedOption = options.find((o) => o.value === value);
   const popupPosition = position === "top" ? "bottom-full mb-1 left-0" : "top-full mt-1 left-0";
 
-  // 바깥 클릭 감지. document 에 mousedown 을 걸어 다른 요소가 click 전파를 막아도 닫힌다
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (boxRef.current && !boxRef.current.contains(e.target as Node)) {

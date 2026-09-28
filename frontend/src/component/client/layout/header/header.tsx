@@ -1,6 +1,7 @@
-// 역할: 상단 헤더. 현재 경로에 맞는 메뉴 라벨·아이콘
 import { type LucideIcon } from "lucide-react";
 import { useLocation } from "react-router-dom";
+
+import ThemeToggle from "./themeToggle";
 
 interface HeaderProps {
   getHeaderInfoByPath: (path: string) => {
@@ -23,6 +24,10 @@ const Header = ({ getHeaderInfoByPath }: HeaderProps) => {
         )}
       </div>
       <span className="font-bold text-text-main">{label}</span>
+
+      <div className="ml-auto">
+        <ThemeToggle />
+      </div>
     </header>
   );
 };

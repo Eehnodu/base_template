@@ -1,4 +1,3 @@
-// 역할: Kakao 로그인 버튼. 카카오 인증 페이지로 리다이렉트
 import React from "react";
 import kakao from "@/assets/client/login/kakao.svg";
 
@@ -30,7 +29,7 @@ const redirect_uri_env = import.meta.env.VITE_APP_PUBLIC_KAKAO_REDIRECT_URI;
  *   client_id="카카오RESTAPI키"
  *   redirect_uri="http://localhost:3000/auth/kakao/callback"
  *   scopeParam="profile_nickname,account_email"
- *   className="bg-yellow-400 text-black px-4 py-2 rounded"
+ *   className="w-full"
  * >
  *   카카오로 로그인
  * </KakaoLoginBtn>
@@ -39,6 +38,8 @@ const KakaoLoginBtn = ({
   client_id = client_id_env,
   redirect_uri = redirect_uri_env,
   scopeParam,
+  className = "",
+  children,
 }: KakaoLoginBtnProps) => {
   const kakaoAuth = () => {
     const scopeQuery = scopeParam ? `&scope=${scopeParam}` : "";
@@ -48,11 +49,11 @@ const KakaoLoginBtn = ({
 
   return (
     <button
-      className="relative bg-[#FEE500] flex flex-row w-[300px] py-3 rounded-lg items-center justify-center text-black font-semibold"
+      className={`relative bg-[#FEE500] flex flex-row w-[300px] py-3 rounded-lg items-center justify-center text-black font-semibold ${className}`}
       onClick={() => kakaoAuth()}
     >
       <img src={kakao} alt="kakao login" className="absolute w-5 h-5 left-10" />
-      <span>카카오 로그인</span>{" "}
+      <span>{children ?? "카카오 로그인"}</span>
     </button>
   );
 };

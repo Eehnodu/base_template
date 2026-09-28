@@ -1,7 +1,6 @@
-// 역할: Google 로그인 버튼(팝업 방식). 현재 페이지를 떠나지 않고 팝업에서 인증한 뒤 postMessage 로 결과를 받는다
 import google from "@/assets/client/login/google.svg";
-import { useAuth } from "../common/useAuth";
-import { parseUserInfo } from "../common/getCookie";
+import { useAuth } from "@/hooks/common/useAuth";
+import { parseUserInfo } from "@/hooks/common/getCookie";
 
 interface GoogleLoginPopupProps {
   client_id?: string;
@@ -40,7 +39,7 @@ const GoogleLoginPopup = ({
     const left = window.screenX + (window.innerWidth - width) / 2;
     const top = window.screenY + (window.innerHeight - height) / 2;
 
-    const popup = window.open(
+    window.open(
       authUrl,
       "googleLoginPopup",
       `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`,
@@ -52,7 +51,6 @@ const GoogleLoginPopup = ({
       if (event.origin !== window.location.origin) return;
 
       if (event.data?.type === "GOOGLE_LOGIN_SUCCESS") {
-        // 쿠키는 팝업에서 이미 심어졌으므로 부모 창은 쿠키를 다시 읽어 Context 만 갱신한다
         const updatedUser = parseUserInfo();
         setUser(updatedUser);
 
@@ -67,11 +65,11 @@ const GoogleLoginPopup = ({
 
   return (
     <button
-      className={`flex items-center justify-center gap-3 w-full py-3.5 rounded-2xl bg-point hover:bg-point-hover transition-all active:scale-[0.98] ${className}`}
+      className={`flex items-center justify-center gap-3 w-full py-3.5 rounded-2xl border border-line bg-bg-card hover:bg-bg-hover transition-all active:scale-[0.98] ${className}`}
       onClick={handlePopupLogin}
     >
       <img src={google} alt="google login" className="w-4 h-4" />
-      <span className="font-semibold text-cmain text-sm">{text}</span>
+      <span className="font-semibold text-text-main text-sm">{text}</span>
     </button>
   );
 };

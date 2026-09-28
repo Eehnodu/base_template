@@ -1,4 +1,4 @@
-# 역할: FastAPI 앱 조립 진입점. 예외 핸들러 → 미들웨어 → 라우터 순으로 등록한다
+# app/main.py
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -13,22 +13,23 @@ from app.module import *
 setup_logging()
 logger = get_logger(__name__)
 
-# 서버 시작·종료 시 한 번씩 실행되는 훅. 커넥션 풀, 백그라운드 작업 정리는 yield 뒤에 둔다
+# 1. Lifespan 설정: 서버 시작과 종료 시 실행될 로직
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("🚀  Backend 시작 중...")
+    logger.info("Backend 시작")
 
     yield
-    print("🛑  Backend 종료 중...")
+    logger.info("Backend 종료")
+    # 예: await ws_manager.close_all()
 
 
 def create_app() -> FastAPI:
     app = FastAPI(lifespan=lifespan)
     
-    # 1. 예외 핸들러. 미들웨어 안에서 난 예외도 같은 형식으로 응답하도록 먼저 건다
+    # 1. 예외 핸들러 등록 (가장 먼저 혹은 미들웨어 직후에 등록 권장)
     setup_exceptions(app)
     
-    # 2. CORS · 보안 헤더 · 요청 ID 미들웨어
+    # 2. CORS 및 보안 헤더 미들웨어 등록
     setup_middlewares(app)
     
     # 3. 라우터 등록

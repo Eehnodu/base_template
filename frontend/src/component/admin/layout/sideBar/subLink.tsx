@@ -1,4 +1,3 @@
-// 역할: 사이드바 단일 링크. 현재 경로와 비교해 활성 표시
 import { SubLinkProps } from "@/types/admin/sidebar";
 import { Link, useLocation } from "react-router-dom";
 
@@ -13,8 +12,6 @@ const SubLink = ({
 }: SubLinkProps) => {
   const { pathname } = useLocation();
 
-  // 하위 메뉴 경로(/admin → /admin/group)는 부모를 활성으로 치지 않고,
-  // 상세 페이지(/admin/group/12)는 활성으로 본다
   const getIsActive = () => {
     if (pathname === to) return true;
     if (end) return false;

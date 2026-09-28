@@ -1,4 +1,3 @@
-# 역할: WebSocket 연결 관리자. 전체 연결·방 단위 그룹·유저 정보를 메모리에 들고 브로드캐스트한다
 import json
 from fastapi import WebSocket
 from typing import Dict, Set, Optional
@@ -91,6 +90,5 @@ class ConnectionManager:
             await connection.send_text(msg_str)
 
 
-# 프로세스 안에서 하나만 존재해야 모든 요청이 같은 연결 목록을 본다.
-# 워커를 여러 개 띄우면 프로세스마다 목록이 갈리므로 그때는 Redis pub/sub 로 대체
+# 싱글톤 인스턴스 생성
 web_socket_manager = ConnectionManager()

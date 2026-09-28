@@ -1,4 +1,3 @@
-# 역할: 소켓 연결 수명 주기. 방 등록 → 메시지 루프 → 종료 시 정리
 from __future__ import annotations
 import json
 from fastapi import WebSocket, WebSocketDisconnect
@@ -13,10 +12,10 @@ class WebSocketService:
         self.manager = web_socket_manager
 
     async def init_state(self, websocket: WebSocket):
-        # 1. 쿼리스트링의 room_id 로 방을 정한다. 없으면 lobby
+        # 1. 프론트엔드(Test.tsx)에서 보낸 room_id 추출
         room_id = websocket.query_params.get("room_id", "lobby")
 
-        # 2. 로그인 데코레이터가 websocket 객체에 심어 둔 사용자 정보. 비로그인이면 guest
+        # 2. with_login_ws 데코레이터에서 주입된 유저 정보 가져오기
         user_id = getattr(websocket, "user_id", "guest")
         auth_type = getattr(websocket, "auth_type", "client")
 
@@ -30,7 +29,8 @@ class WebSocketService:
                 # 클라이언트가 보낸 텍스트 메시지 수신
                 data = await websocket.receive_text()
 
-                # 기본 동작: 같은 방 전체에 에코 브로드캐스트. 프로젝트별 메시지 처리로 교체한다
+                # [테스트 로직]
+                # 내가 속한 방 전체(관리자 포함 참여자들)에게 메시지 브로드캐스트
                 broadcast_payload = {
                     "type": "chat",
                     "sender": user_id,
@@ -44,6 +44,8 @@ class WebSocketService:
                     room_id=room_id, message=broadcast_payload
                 )
 
+                # await self.manager.broadcast_all(broadcast_payload)
+
         except WebSocketDisconnect:
             # 1005, 1000 등 정상적인 연결 종료는 여기서 처리
             logger.info(f"ℹ️ [WS] User {user_id} left Room: {room_id}")
@@ -53,7 +55,7 @@ class WebSocketService:
             logger.error(f"⚠️ [WS Error] Info: {e}")
 
         finally:
-            # 5. 어떤 경로로 끊겨도 목록에서 빠져야 유령 연결이 남지 않는다
+            # 5. 연결 종료 시 매니저 목록에서 제거
             self.manager.disconnect(websocket, room_id=room_id)
 
 

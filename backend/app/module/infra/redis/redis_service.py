@@ -1,4 +1,4 @@
-# 역할: Redis 접근 래퍼. 캐시·상태·락 용도로만 쓰고 DB 대용으로 쓰지 않는다
+# app/module/infra/redis/redis_service.py
 import redis.asyncio as redis
 from app.core.config.settings import settings
 from typing import Optional
@@ -16,14 +16,17 @@ class RedisService:
     ):
         self._host = host or settings.redis_host
         self._port = port or settings.redis_port
+        self._password = password or settings.redis_password
         self._client: Optional[redis.Redis] = None
 
-    # 연결은 첫 사용 시점에 만든다. 서비스만 생성되고 Redis 를 안 쓰는 요청에서 불필요한 연결을 피한다
     @property
     def client(self) -> redis.Redis:
         if not self._client:
             self._client = redis.Redis(
-                host=self._host, port=self._port, decode_responses=True
+                host=self._host,
+                port=self._port,
+                password=self._password,
+                decode_responses=True,
             )
         return self._client
 
@@ -46,7 +49,6 @@ class RedisService:
         expire:
         - 초 단위 TTL
         - 기본값 300초 (5분)
-        - 항상 TTL 을 두는 이유: 지우는 코드가 빠져도 키가 영구히 남지 않게
         """
         await self.client.set(key, value, ex=expire)
 
@@ -176,6 +178,6 @@ class RedisService:
         timeout:
         - 락 유지 시간 (초)
         """
-        lock = await self.client.lock(name, timeout=timeout)
+        lock = self.client.lock(name, timeout=timeout)
         await lock.acquire()
         return lock

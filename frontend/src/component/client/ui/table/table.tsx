@@ -1,27 +1,30 @@
-// 역할: 컬럼 정의 기반 테이블. rowCount 를 주면 빈 행을 채워 페이지마다 높이가 일정하게 유지된다
 import TableHeader from "./tableHeader";
 import TableBody from "./tableBody";
 
 export type Size = "sm" | "md" | "lg";
 export type Align = "left" | "center" | "right";
 
+// 행 데이터는 화면마다 모양이 달라 필드를 자유롭게 읽을 수 있게 둔다
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TableRow = Record<string, any>;
+
 export interface Column {
   key: string;
   header: string;
   width?: string;
   align?: Align;
-  render?: (row: any) => React.ReactNode;
+  render?: (row: TableRow) => React.ReactNode;
   icon?: React.ReactNode;
 }
 
 interface TableProps {
   columns: Column[];
-  data: any[];
+  data: TableRow[];
   size?: Size;
   striped?: boolean;
   className?: string;
-  onRowClick?: (row: any) => void;
-  rowCount?: number; // 고정 행 수. 데이터가 적으면 빈 행으로 채운다
+  onRowClick?: (row: TableRow) => void;
+  rowCount?: number;
   icon?: React.ReactNode;
 }
 

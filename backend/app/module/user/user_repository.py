@@ -1,6 +1,4 @@
-# 역할: 사용자 DB 쿼리
-
-import os
+# app/module/user/user_repository.py
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,7 +30,6 @@ class UserRepository:
         self.db.add(user)
         await self.db.commit()
 
-    # 소셜 로그인용 upsert. 같은 이메일이 있으면 마지막 로그인 시각만 갱신하고, 없으면 비밀번호 없이 생성
     async def get_or_create_user(self, email: str, name: str, picture: str) -> User | None:
         result = await self.db.execute(select(User).filter(User.email == email))
         user = result.unique().scalar_one_or_none()
@@ -51,7 +48,6 @@ class UserRepository:
             self.db.add(user)
         
         await self.db.commit()
-        # DB 가 채운 id·기본값을 다시 읽어 와야 토큰 발급에 바로 쓸 수 있다
         await self.db.refresh(user)
 
         return user

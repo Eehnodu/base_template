@@ -140,7 +140,7 @@ const Alert = ({
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-2 right-2 p-1 hover:bg-black/10 rounded"
+          className="absolute top-2 right-2 p-1 hover:bg-bg-hover rounded"
         >
           <X className="w-4 h-4" />
         </button>

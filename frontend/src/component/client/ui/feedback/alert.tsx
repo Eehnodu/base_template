@@ -23,10 +23,10 @@ const Alert = ({
   className = "",
 }: AlertProps) => {
   const colors = {
-    info: "bg-blue-50 border-blue-400 text-blue-800",
-    success: "bg-green-50 border-green-400 text-green-800",
-    warning: "bg-yellow-50 border-yellow-400 text-yellow-800",
-    error: "bg-red-50 border-red-400 text-red-800",
+    info: "bg-info-bg border-info text-info",
+    success: "bg-success-bg border-success text-success",
+    warning: "bg-warning-bg border-warning text-warning",
+    error: "bg-error-bg border-error text-error",
   }[type];
 
   const sizeStyles = {
@@ -86,7 +86,7 @@ const Alert = ({
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-2 right-2 p-1 hover:bg-black/10 rounded"
+          className="absolute top-2 right-2 p-1 hover:bg-bg-hover rounded"
         >
           <X className="w-4 h-4" />
         </button>

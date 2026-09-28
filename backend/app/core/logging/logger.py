@@ -1,4 +1,3 @@
-# 역할: 모듈별 로거 획득 헬퍼
 import logging
 
 

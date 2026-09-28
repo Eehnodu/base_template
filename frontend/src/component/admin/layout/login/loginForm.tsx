@@ -74,7 +74,7 @@ const LoginForm = ({
           <Button
             variant="main"
             full
-            type="submit"
+            onClick={onSubmit}
             disabled={!email || !password}
             className="font-semibold shadow-md active:scale-[0.98] transition-transform"
           >

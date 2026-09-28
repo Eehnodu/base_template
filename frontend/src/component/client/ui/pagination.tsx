@@ -1,12 +1,6 @@
-// 역할: 페이지 그룹 단위 페이지네이션. visibleCount 개씩 묶어 이전/다음 그룹으로 이동한다
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type PaginationSize = "sm" | "md";
-
-/**
- * - overlay: 테이블 하단 중앙 고정(absolute). 데이터 없으면 렌더 생략.
- * - flow: 문서 흐름에 두어 flex 레이아웃 안에서도 보임. 0건이어도 비활성 UI 표시.
- */
 type PaginationVariant = "overlay" | "flow";
 
 interface Props {
@@ -34,9 +28,7 @@ const Pagination = ({
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const count = Math.max(1, Math.min(visibleCount, totalPages));
-  // total 이 줄어 page 가 범위를 벗어나도 마지막 페이지로 보정
   const currentPage = Math.min(Math.max(1, page), totalPages);
-  // 현재 페이지가 속한 그룹의 첫 페이지 (5개 단위면 1, 6, 11 …)
   const start = Math.floor((currentPage - 1) / count) * count + 1;
   const end = Math.min(totalPages, start + count - 1);
   const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);

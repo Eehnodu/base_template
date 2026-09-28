@@ -1,4 +1,3 @@
-// 역할: 입력 + 자동완성 목록. 입력값으로 options 를 필터링하고, 목록에 없는 값도 그대로 허용한다
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -16,7 +15,6 @@ const ComboBox = ({ value, onChange, options, placeholder = "입력하거나 선
 
   const filtered = options.filter((o) => o.toLowerCase().includes(value.toLowerCase()));
 
-  // 바깥 클릭 감지. document 에 mousedown 을 걸어 다른 요소가 click 전파를 막아도 닫힌다
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);

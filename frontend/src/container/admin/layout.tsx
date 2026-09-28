@@ -1,4 +1,3 @@
-// 역할: 관리자 공통 레이아웃 + 인증 가드. 세션이 없으면 refresh 를 시도하고, 안 되면 로그인으로 보낸다
 import { parseUserInfo, refreshExp } from "@/hooks/common/getCookie";
 import { useRefreshToken } from "@/hooks/common/useAPI";
 import { useEffect, useState } from "react";
@@ -12,7 +11,6 @@ import {
   UsersIcon,
 } from "lucide-react";
 
-// 사이드바 메뉴 정의. 헤더 제목도 이 배열에서 파생되므로 메뉴를 추가하면 헤더는 자동으로 따라온다
 const adminMenu: AdminMenuItem[] = [
   {
     type: "link",
@@ -52,13 +50,12 @@ const routeConfig: Record<
 );
 
 const getHeaderInfoByPath = (pathname: string) => {
-  // 긴 경로부터 매칭해 /admin/group 이 /admin 에 먹히지 않게 한다
   const key = Object.keys(routeConfig)
     .sort((a, b) => b.length - a.length)
     .find((k) => pathname === k || pathname.startsWith(k + "/"));
 
   return (
-    (key && routeConfig[key]) || {
+    (key && { ...routeConfig[key], icon: routeConfig[key].icon ?? null }) || {
       label: "관리자 도구",
       icon: null,
     }
@@ -73,8 +70,6 @@ const AdminLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
-    // user_info 는 사라졌지만 refresh_exp 가 남아 있으면 access 만 만료된 상태.
-    // 조용히 갱신한 뒤 새로고침해 쿠키를 다시 읽는다
     if (!user && isRefresh) {
       refresh()
         .then(() => {
@@ -91,7 +86,6 @@ const AdminLayout = () => {
     }
   }, [user, isRefresh, navigate, refresh]);
 
-  // 리다이렉트 전 관리자 화면이 잠깐 보이는 것을 막는다
   if (!user || user.auth_type !== "admin") {
     return null;
   }

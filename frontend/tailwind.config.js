@@ -69,6 +69,15 @@ export default {
           shine: "rgb(var(--skeleton-shine) / <alpha-value>)",
         },
       },
+      keyframes: {
+        "needle-fade": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.15" },
+        },
+      },
+      animation: {
+        "needle-fade": "needle-fade 1.2s ease-in-out infinite",
+      },
     },
   },
   plugins: [],

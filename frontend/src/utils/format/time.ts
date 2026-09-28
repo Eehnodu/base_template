@@ -62,8 +62,9 @@ export function formatTimeEnglish(seconds: number): string {
 
 /**
  * 자동
- * - 1분 미만: "32s"
- * - 그 외: 영어 표기 (예: 1h 3m 42s)
+ * - 1분 미만: "32초"
+ * - 1시간 미만: "mm:ss"
+ * - 1시간 이상: "HH:mm:ss"
  */
 export function formatTimeAuto(seconds: number): string {
   const sec = normalizeSeconds(seconds);

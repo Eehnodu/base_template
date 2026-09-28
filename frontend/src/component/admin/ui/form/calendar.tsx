@@ -1,4 +1,3 @@
-// 역할: 기간 선택 Datepicker. 확인을 누르기 전까지 draft 로만 들고 있다가 onChange 로 확정한다
 import { useEffect, useState } from "react";
 import {
   ChevronLeft,
@@ -246,7 +245,7 @@ const Calendar = ({
       return;
     }
 
-    // 두 번째 클릭이 시작일보다 앞이면 순서를 바꿔 항상 start <= end 가 되게 한다
+    // start만 있는 상태
     if (picked < draftStart) {
       setDraft({ start: picked, end: draftStart });
     } else {
@@ -316,7 +315,6 @@ const Calendar = ({
 
   /** 선택 확정 */
   const handleConfirm = () => {
-    // 시작일만 찍고 확인하면 하루짜리 범위로 확정
     const confirmed = draft.start && !draft.end
       ? { start: draft.start, end: draft.start }
       : draft;

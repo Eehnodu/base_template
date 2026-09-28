@@ -1,4 +1,3 @@
-// 역할: 라이트/다크 테마 상태. html.dark 클래스와 localStorage 로 유지한다
 import { useCallback, useEffect, useState } from "react";
 
 export type Theme = "light" | "dark";

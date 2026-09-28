@@ -1,4 +1,3 @@
-// 역할: 공통 텍스트 입력. 아이콘 슬롯과 error/success 테두리 상태를 가진다
 import { useState } from "react";
 
 type Size = "sm" | "md" | "lg";
@@ -28,7 +27,7 @@ interface InputBoxProps {
   onLeftIconClick?: () => void;
   onRightIconClick?: () => void;
   full?: boolean;
-  width?: number; // full=false 일 때 px 고정 너비
+  width?: number; // ✅ 추가
   onBlur?: () => void;
   iconWidth?: number;
 }
@@ -46,6 +45,8 @@ const InputBox = ({
   errorMessage = "",
   leftIcon,
   rightIcon,
+  onLeftIconClick,
+  onRightIconClick,
   full = true,
   width,
   onBlur,
@@ -80,7 +81,6 @@ const InputBox = ({
 
   const widthStyle = full ? "w-full" : width ? undefined : "inline-flex";
 
-  // className 에 배경색이 오면 기본 배경을 빼서 클래스 충돌을 막는다
   const baseBg = className.includes("bg-") ? "" : "bg-input-bg";
 
   return (
@@ -105,7 +105,9 @@ const InputBox = ({
           flex items-center justify-center
           ${sizeStyles.icon}
           leading-none shrink-0
+          ${onLeftIconClick ? "cursor-pointer" : ""}
           `}
+            onClick={onLeftIconClick}
           >
             {leftIcon}
           </div>
@@ -134,7 +136,9 @@ const InputBox = ({
             flex items-center justify-center
             ${sizeStyles.icon}
             leading-none shrink-0
+            ${onRightIconClick ? "cursor-pointer" : ""}
             `}
+            onClick={onRightIconClick}
           >
             {error ? (
               <div className="flex cursor-none rounded-full bg-error w-4 h-4 items-center justify-center text-bg">

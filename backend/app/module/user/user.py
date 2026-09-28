@@ -1,4 +1,3 @@
-# 역할: 사용자 모델 (tb_users). 소셜 로그인으로 가입한 사용자는 password 가 NULL
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 
 from app.core.database.base import Base, now_kst

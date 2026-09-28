@@ -1,4 +1,3 @@
-// 역할: fetch 래퍼 훅 모음. 모든 요청에 쿠키를 싣고, 401 이면 refresh 후 같은 요청을 한 번 재시도한다
 import { useMutation, useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useRef } from "react";
 
@@ -7,13 +6,55 @@ export const hostname = window.location.hostname;
 
 export const baseURL = import.meta.env.VITE_APP_PUBLIC_BASE_URL;
 
+// 세션 갱신까지 실패했을 때 보낼 곳 — admin 화면이면 admin 로그인, 아니면 메인
+const defaultFallback = () =>
+  window.location.pathname.startsWith("/admin") ? "/admin/login" : "/";
+
 // 공통 응답 타입
 export interface BaseResponse<T> {
   success: boolean;
   message: string;
   data: T;
-  errorCode: string;
+  errorCode: string | null;
 }
+
+/**
+ * API 실패 시 모든 훅이 던지는 에러
+ *
+ * - status: HTTP 상태 코드 (세션 만료는 401)
+ * - message: 서버가 보낸 message (사용자에게 보여 줄 문구)
+ * - errorCode: 서버가 보낸 errorCode (예: "USER_NOT_FOUND") — 에러 종류별 분기에 쓴다
+ */
+export class ApiError extends Error {
+  status: number;
+  errorCode: string | null;
+
+  constructor(status: number, message: string, errorCode: string | null = null) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.errorCode = errorCode;
+  }
+}
+
+// 실패 응답 본문(BaseResponse)을 읽어 ApiError 로 만든다. 본문이 JSON 이 아니어도 동작한다
+const toApiError = async (response: Response): Promise<ApiError> => {
+  const text = await response.text().catch(() => "");
+  let body: Partial<BaseResponse<unknown>> | null = null;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    body = null;
+  }
+  return new ApiError(
+    response.status,
+    body?.message || "요청을 처리하지 못했습니다.",
+    body?.errorCode ?? null,
+  );
+};
+
+const sessionExpired = () =>
+  new ApiError(401, "세션이 만료되었습니다. 다시 로그인해 주세요.", "SESSION_EXPIRED");
 
 /**
  * Refresh Token을 사용해 세션을 갱신하는 함수
@@ -24,9 +65,9 @@ export interface BaseResponse<T> {
  * 쿠키 기반(refresh_token)를 사용하며,
  * credentials: "include"로 요청됩니다.
  *
- * 주의
+ * ⚠️ 주의
  * - refresh API가 401을 반환해도 throw 하지 않습니다.
- * - 401이면 false, 그 외에는 true를 반환합니다.
+ * - 항상 true를 반환합니다.
  * - redirect / logout 처리는 호출 측에서 판단해야 합니다.
  *
  * @returns {() => Promise<boolean>}
@@ -44,7 +85,6 @@ export const useRefreshToken = () => {
     : "api/auth/refresh_token";
 
   const refresh = async () => {
-    // 토큰은 httponly 쿠키에 있으므로 Authorization 헤더가 아니라 credentials 로 보낸다
     const response = await fetch(`${baseURL}/${refreshUrl}`, {
       method: "POST",
       credentials: "include",
@@ -79,11 +119,11 @@ export const useGet = <T>(
   url: string,
   key: (string | number)[],
   enabled: boolean = true,
-  fallback: string = "/",
+  fallback: string = defaultFallback(),
 ) => {
   const refreshToken = useRefreshToken();
 
-  return useQuery<T>({
+  return useQuery<T, ApiError>({
     queryKey: key,
     enabled,
     queryFn: async () => {
@@ -95,33 +135,27 @@ export const useGet = <T>(
 
       let response = await makeRequest();
 
-      // access 만료(401) → refresh → 같은 요청 1회 재시도.
-      // refresh 도 실패하면 세션이 끝난 것이므로 fallback 으로 보낸다
       if (response.status === 401) {
         const ok = await refreshToken();
         if (!ok) {
           window.location.href = fallback;
-          return;
+          throw sessionExpired();
         }
         response = await makeRequest();
       }
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`API 오류 ${response.status}: ${text}`);
-      }
+      if (!response.ok) throw await toApiError(response);
+
       const json = (await response.json()) as BaseResponse<T>;
 
       if (!json.success) {
-        throw new Error(json.message || "API Error");
+        throw new ApiError(response.status, json.message, json.errorCode);
       }
 
       return json.data;
     },
     refetchOnWindowFocus: false,
     refetchOnMount: true,
-    // 5분간은 캐시를 신선한 것으로 보고 재요청하지 않는다.
-    // 페이지·필터 전환 시 이전 데이터를 유지해 깜빡임을 줄인다(keepPreviousData)
     staleTime: 1000 * 60 * 5,
     placeholderData: keepPreviousData,
   });
@@ -133,21 +167,21 @@ export const useGet = <T>(
  * 자동으로 401 응답 시 refreshToken()을 호출하고,
  * 재시도까지 해주는 fetch 래퍼입니다.
  *
- * @template TResponse 응답 데이터 타입
  * @template TRequest 요청 바디 타입 (object, FormData, void)
- * @template TError 에러 타입 (기본: { status?: number; message?: string })
+ * @template TResponse 응답 데이터 타입
+ * @template TError 에러 타입 (기본: ApiError — status · message · errorCode)
  *
  * @param url API endpoint
  * @param fallback refresh token 갱신 실패 시 돌아갈 url
  *
  * @example
  * // JSON Body 요청
- * const createUser = usePost<UserResponse, { name: string; email: string }>("/users");
+ * const createUser = usePost<{ name: string; email: string }, UserResponse>("api/users");
  * createUser.mutate({ name: "홍길동", email: "hong@example.com" });
  *
  * @example
  * // FormData 요청 (파일 업로드)
- * const uploadFile = usePost<{ url: string }, FormData>("/upload");
+ * const uploadFile = usePost<FormData, { url: string }>("api/upload");
  * const fd = new FormData();
  * fd.append("file", fileInput.files[0]);
  * uploadFile.mutate(fd);
@@ -160,21 +194,22 @@ export const useGet = <T>(
 export const usePost = <
   TRequest extends object | FormData | void,
   TResponse,
-  TError = { status?: number; message?: string },
+  TError = ApiError,
 >(
   url: string,
-  fallback: string = "/",
+  fallback: string = defaultFallback(),
 ) => {
   const refreshToken = useRefreshToken();
 
   return useMutation<TResponse, TError, TRequest>({
     mutationFn: async (body: TRequest) => {
+      // 헤더 조건부
       const headers: HeadersInit = {};
       let fetchBody: BodyInit;
 
       if (body instanceof FormData) {
-        // FormData 는 브라우저가 boundary 포함 Content-Type 을 직접 넣어야 하므로 헤더를 비워 둔다
         fetchBody = body;
+        // FormData면 Content-Type 자동 설정 (headers에 아무것도 안 넣음)
       } else {
         fetchBody = JSON.stringify(body);
         headers["Content-Type"] = "application/json";
@@ -195,24 +230,12 @@ export const usePost = <
         const ok = await refreshToken();
         if (!ok) {
           window.location.href = fallback;
-          throw new Error("세션 만료");
+          throw sessionExpired();
         }
         response = await makeRequest();
       }
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        let errorData;
-        try {
-          errorData = JSON.parse(errorText);
-        } catch {
-          errorData = null;
-        }
-        throw {
-          status: response.status,
-          message: errorData?.message || errorText || "Something went wrong",
-        } as TError;
-      }
+      if (!response.ok) throw await toApiError(response);
 
       // 204, 205 등 No Content 응답일 경우 안전하게 처리
       if (response.status === 204 || response.status === 205) {
@@ -222,10 +245,7 @@ export const usePost = <
       const json = (await response.json()) as BaseResponse<TResponse>;
 
       if (!json.success) {
-        throw {
-          status: response.status,
-          message: json.message || "API Error",
-        } as TError;
+        throw new ApiError(response.status, json.message, json.errorCode);
       }
 
       return json.data;
@@ -233,14 +253,13 @@ export const usePost = <
   });
 };
 
-/** PATCH 요청 훅. 401 갱신·재시도 동작은 usePost 와 같다 */
 export const usePatch = <
   TResponse,
   TRequest extends object | void = void,
-  TError = { status?: number; message?: string },
+  TError = ApiError,
 >(
   url: string,
-  fallback: string = "/",
+  fallback: string = defaultFallback(),
 ) => {
   const refreshToken = useRefreshToken();
 
@@ -258,30 +277,26 @@ export const usePatch = <
 
       if (response.status === 401) {
         const ok = await refreshToken();
-        if (!ok) { window.location.href = fallback; throw new Error("세션 만료"); }
+        if (!ok) { window.location.href = fallback; throw sessionExpired(); }
         response = await makeRequest();
       }
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw { status: response.status, message: errorData?.message || "Error" } as TError;
-      }
+      if (!response.ok) throw await toApiError(response);
 
       if (response.status === 204) return null as unknown as TResponse;
       const json = (await response.json()) as BaseResponse<TResponse>;
-      if (!json.success) throw { status: response.status, message: json.message } as TError;
+      if (!json.success) throw new ApiError(response.status, json.message, json.errorCode);
       return json.data;
     },
   });
 };
 
-/** DELETE 요청 훅. 401 갱신·재시도 동작은 usePost 와 같다 */
 export const useDelete = <
   TResponse = void,
-  TError = { status?: number; message?: string },
+  TError = ApiError,
 >(
   url: string,
-  fallback: string = "/",
+  fallback: string = defaultFallback(),
 ) => {
   const refreshToken = useRefreshToken();
 
@@ -297,27 +312,21 @@ export const useDelete = <
 
       if (response.status === 401) {
         const ok = await refreshToken();
-        if (!ok) { window.location.href = fallback; throw new Error("세션 만료"); }
+        if (!ok) { window.location.href = fallback; throw sessionExpired(); }
         response = await makeRequest();
       }
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw { status: response.status, message: errorData?.message || "Error" } as TError;
-      }
+      if (!response.ok) throw await toApiError(response);
 
       if (response.status === 204) return null as unknown as TResponse;
       const json = (await response.json()) as BaseResponse<TResponse>;
-      if (!json.success) throw { status: response.status, message: json.message } as TError;
+      if (!json.success) throw new ApiError(response.status, json.message, json.errorCode);
       return json.data;
     },
   });
 };
 
-/**
- * 스트리밍 응답(chunked text)을 읽어 onChunk 로 조각을 넘기는 훅.
- * AbortController 로 진행 중인 스트림을 중간에 끊을 수 있다
- */
+
 export const useChatStream = <TRequest extends object>(url: string) => {
   const refreshToken = useRefreshToken();
   const controllerRef = useRef<AbortController | null>(null);
@@ -366,7 +375,7 @@ export const useChatStream = <TRequest extends object>(url: string) => {
         }
       }
     } catch (err) {
-      if (err.name === "AbortError") {
+      if (err instanceof DOMException && err.name === "AbortError") {
         console.log("Chat stream aborted");
       } else {
         throw err;

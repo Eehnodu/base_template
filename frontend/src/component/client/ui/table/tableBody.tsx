@@ -1,13 +1,12 @@
-// 역할: 테이블 본문. 데이터 행과 rowCount 를 맞추기 위한 빈 행을 그린다
-import type { Column } from "./table";
+import type { Column, TableRow } from "./table";
 
 interface TableBodyProps {
   columns: Column[];
-  data: any[];
+  data: TableRow[];
   rowSizeClass: string;
   striped: boolean;
   rowCount?: number;
-  onRowClick?: (row: any) => void;
+  onRowClick?: (row: TableRow) => void;
 }
 
 const TableBody = ({
@@ -18,7 +17,6 @@ const TableBody = ({
   rowCount,
   onRowClick,
 }: TableBodyProps) => {
-  // rowCount 보다 데이터가 적으면 빈 행을 채워 페이지 전환 시 표 높이가 흔들리지 않게 한다
   const target = rowCount && rowCount > 0 ? rowCount : data.length;
   const emptyCount = Math.max(0, target - data.length);
 
@@ -48,7 +46,7 @@ const TableBody = ({
                   key={col.key}
                   className={`px-3 py-2.5 align-middle text-text-main ${alignClass} ${index < data.length - 1 ? "border-b border-line" : ""}`}
                 >
-                  {col.render ? col.render(row) : ((row as any)[col.key] ?? "")}
+                  {col.render ? col.render(row) : (row[col.key] ?? "")}
                 </td>
               );
             })}

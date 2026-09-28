@@ -1,6 +1,6 @@
-import GoogleLoginBtn from "@/hooks/auth/googleLogin";
-import GoogleLoginPopup from "@/hooks/auth/googleLoginPopup";
-import KakaoLoginBtn from "@/hooks/auth/kakaoLogin";
+import GoogleLoginBtn from "@/component/client/auth/googleLogin";
+import GoogleLoginPopup from "@/component/client/auth/googleLoginPopup";
+import KakaoLoginBtn from "@/component/client/auth/kakaoLogin";
 
 const ClientMain = () => {
   return (

@@ -1,4 +1,3 @@
-// 역할: 테이블 헤더. 컬럼의 width·align 을 th 에 반영한다
 import type { Column } from "./table";
 
 interface TableHeaderProps {

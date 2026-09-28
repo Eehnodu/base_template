@@ -45,7 +45,7 @@ const Checkbox = ({
         className={`
           ${sizeStyles.box}
           accent-primary
-          border-gray-400 rounded
+          border-line-strong rounded
         `}
       />
 

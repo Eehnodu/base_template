@@ -1,11 +1,14 @@
-# 역할: Google OAuth 코드 교환 → 사용자 정보 조회 → 회원 upsert. 모델·라우터 없이 외부 호출만 감싼다
+# app/module/infra/google/google_service.py
 
 import httpx
-from fastapi import HTTPException
 
 from app.core.config.settings import settings
 from app.core.utils.response import fail
 from app.module.user.user_repository import UserRepository
+from app.core.logging import get_logger
+
+
+logger = get_logger(__name__)
 
 
 class GoogleService:
@@ -20,9 +23,8 @@ class GoogleService:
         code = body.get("code")
 
         if not code:
-            raise fail("Authorization code not provided", "AUTH_CODE_NOT_PROVIDED", 400)
+            fail("인증 코드가 없습니다.", "AUTH_CODE_NOT_PROVIDED", 400)
 
-        # 프론트는 authorization code 만 넘긴다. client_secret 은 서버에만 있어야 하므로 토큰 교환은 여기서
         token_data = {
             "code": code,
             "client_id": settings.google_client_id,
@@ -32,28 +34,32 @@ class GoogleService:
         }
 
         async with httpx.AsyncClient() as client:
-            token_resp = await client.post(GOOGLE_TOKEN_URL, data=token_data)
             try:
+                token_resp = await client.post(GOOGLE_TOKEN_URL, data=token_data)
                 token_resp.raise_for_status()
             except httpx.HTTPStatusError as e:
-                raise HTTPException(status_code=401, detail=f"google token request failed: {e.response.text}")
-                
+                logger.warning(f"google token request failed: {e.response.status_code} {e.response.text}")
+                fail("소셜 로그인에 실패했습니다. 다시 시도해 주세요.", "OAUTH_TOKEN_FAILED", 400)
+
             access_token = token_resp.json().get("access_token")
-
             if not access_token:
-                raise HTTPException(status_code=500, detail="access token missing")
-            
-            userinfo_resp = await client.get(
-                GOOGLE_USERINFO_URL,
-                headers={"Authorization": f"Bearer {access_token}"}
-            )
-            userinfo_resp.raise_for_status()
-            userinfo = userinfo_resp.json()
+                fail("소셜 로그인에 실패했습니다. 다시 시도해 주세요.", "OAUTH_TOKEN_MISSING", 400)
 
+            try:
+                userinfo_resp = await client.get(
+                    GOOGLE_USERINFO_URL,
+                    headers={"Authorization": f"Bearer {access_token}"},
+                )
+                userinfo_resp.raise_for_status()
+            except httpx.HTTPStatusError as e:
+                logger.warning(f"google userinfo request failed: {e.response.status_code} {e.response.text}")
+                fail("소셜 로그인에 실패했습니다. 다시 시도해 주세요.", "OAUTH_USERINFO_FAILED", 400)
+
+            userinfo = userinfo_resp.json()
             email = userinfo.get("email")
             name = userinfo.get("name")
             picture = userinfo.get("picture", "")
-        
+
         user = await self.user_repo.get_or_create_user(email, name, picture)
-        
-        return user 
+
+        return user

@@ -1,6 +1,7 @@
-# 역할: 전역 예외 핸들러. 어떤 예외든 BaseResponse 형태의 JSON 으로 통일해 내려준다
+# core/exception/handler.py
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
+from app.core.config.settings import settings
 from app.core.utils.response import BaseResponse
 from app.core.logging import get_logger
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -12,8 +13,6 @@ def setup_exceptions(app: FastAPI) -> None:
     """
     모든 예외 핸들러를 등록하는 함수
     """
-    # 404 처럼 Starlette 가 직접 던지는 예외도 같은 형식으로 맞추기 위해 둘 다 등록.
-    # fail() 이 던진 HTTPException 도 여기로 와서 detail → message, error_code → errorCode 로 옮겨진다
     @app.exception_handler(StarletteHTTPException)
     @app.exception_handler(HTTPException)
     async def http_handler(request: Request, exc: HTTPException):
@@ -31,10 +30,9 @@ def setup_exceptions(app: FastAPI) -> None:
             content=body.model_dump(),
         )
 
-    # 예상 못 한 예외는 내부 정보를 노출하지 않도록 고정 메시지만 내려주고 상세는 로그에 남긴다
     @app.exception_handler(Exception)
     async def unhandled_handler(request: Request, exc: Exception):
-        logger.error(f"Unhandled exception: {exc}")
+        logger.exception(f"Unhandled exception: {exc}")
         body = BaseResponse(
             success=False,
             message="Internal Server Error",
@@ -42,7 +40,17 @@ def setup_exceptions(app: FastAPI) -> None:
             errorCode="INTERNAL_ERROR",
         )
 
-        return JSONResponse(
+        response = JSONResponse(
             status_code=500,
             content=body.model_dump(),
         )
+
+        # 500 은 CORS 미들웨어 바깥에서 만들어져 CORS 헤더가 빠진다.
+        # 헤더가 없으면 브라우저가 응답을 막아 프론트가 에러 내용을 못 읽으므로 직접 붙인다.
+        origin = request.headers.get("origin")
+        if origin and origin in settings.cors_origins:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Vary"] = "Origin"
+
+        return response

@@ -1,4 +1,3 @@
-// 역할: 확인/취소형 모달. ESC·오버레이 클릭으로 닫힌다
 import { useEffect, useRef, type MouseEvent } from "react";
 import Button from "@/component/admin/ui/form/button";
 
@@ -38,7 +37,7 @@ type ButtonCount = 0 | 1 | 2;
  */
 interface ModalProps {
   open: boolean;
-  onClose?: () => void;
+  onClose: () => void;
 
   title: string;
   description?: React.ReactNode;
@@ -136,8 +135,6 @@ const Modal = ({
 
   if (!open) return null;
 
-  // 모달 안에서 드래그를 시작해 바깥에서 마우스를 떼면 click 이 오버레이에서 발생한다.
-  // mousedown 위치까지 확인해 그 경우에는 닫히지 않게 한다
   const handleOverlayMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     mouseDownOnOverlay.current = e.target === e.currentTarget;
   };
@@ -163,7 +160,7 @@ const Modal = ({
 
   return (
     <div
-      className="fixed inset-0 z-10 flex items-center justify-center bg-black/40"
+      className="fixed inset-0 z-10 flex items-center justify-center bg-overlay/40"
       onMouseDown={handleOverlayMouseDown}
       onClick={handleOverlayClick}
     >

@@ -46,8 +46,8 @@ const TextareaBox = ({
   }[size];
 
   const borderColor = (() => {
-    if (error) return "border-red-500";
-    if (success) return "border-green-500";
+    if (error) return "border-error";
+    if (success) return "border-success";
     if (focused) return "border-line-focus";
     return "border-line hover:border-line-focus";
   })();

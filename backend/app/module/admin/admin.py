@@ -1,4 +1,4 @@
-# 역할: 관리자 계정 모델 (tb_admins)
+# app/module/admin/admin.py
 from sqlalchemy import Column, DateTime, Integer, String
 
 from app.core.database.base import Base, now_kst

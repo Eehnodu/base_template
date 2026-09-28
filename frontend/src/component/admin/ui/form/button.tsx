@@ -1,4 +1,3 @@
-// 역할: 공통 버튼. leftIcon/rightIcon 은 cloneElement 로 size 에 맞는 크기 클래스를 덧입힌다
 import {
   ButtonHTMLAttributes,
   ReactNode,
@@ -47,8 +46,8 @@ const Button = ({
       : "border border-line-strong bg-sub2 hover:bg-sub2-hover active:bg-sub2-active text-black",
 
     danger: disabled
-      ? "bg-red-300 text-white/40 cursor-not-allowed"
-      : "bg-red-500 hover:bg-red-600 active:bg-red-700 text-white",
+      ? "bg-error/40 text-text-inverse/60 cursor-not-allowed"
+      : "bg-error hover:bg-error/90 active:bg-error/80 text-text-inverse",
   };
 
   const sizes = {
@@ -57,7 +56,7 @@ const Button = ({
     lg: "px-5 py-2.5 text-lg gap-2.5",
   };
 
-  // 버튼 size 에 맞는 아이콘 크기
+  // ✅ 버튼 size에 따라 아이콘 크기 클래스
   const iconSizeClassMap: Record<NonNullable<ButtonProps["size"]>, string> = {
     sm: "w-4 h-4", // 16px
     md: "w-5 h-5", // 20px

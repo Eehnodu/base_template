@@ -19,9 +19,15 @@
 
 - React 19 + TypeScript + Vite, react-router-dom v7, TanStack Query v5, Tailwind CSS v3
 - 다크모드 + 모노톤 팔레트 (CSS 변수 토큰)
-- 공통 컴포넌트: Alert · Modal · FormModal · Toast · Button · InputBox · SelectBox · TextareaBox · Checkbox · RadioButton · Toggle · Calendar · DepartmentTreeSelect · Table · Pagination · Loading · Skeleton · PageSkeleton
-- `useGet / usePost` 훅 (401 시 토큰 자동 갱신), `useAuth`, 인증 컨텍스트
-- 관리자 레이아웃(헤더 · 사이드바) + 로그인 화면, 클라이언트 레이아웃
+- 공통 컴포넌트 (admin · client 두 벌): Alert · Modal · FormModal · Toast · ErrorState · EmptyState · Button · InputBox · SelectBox · ComboBox · TextareaBox · Checkbox · RadioButton · Toggle · Calendar · DepartmentTreeSelect · Table · Pagination · Loading · Skeleton · PageSkeleton
+- `useGet / usePost / usePatch / useDelete` 훅 (401 시 토큰 자동 갱신, 실패는 `ApiError`), `useAuth`, `useTheme`, 인증 컨텍스트
+- 관리자 레이아웃(헤더 · 사이드바) + 로그인 화면, 클라이언트 레이아웃, Google · Kakao 로그인 버튼
+
+**Claude Code 설정**
+
+- `CLAUDE.md` + `.claude/`: 규칙(프론트 · 백엔드 · 글쓰기), 스킬 16개(`/feature` · `/design` · `/fullstack` · `/fix` · `/verify` · `/review` · `/audit` 등), 에이전트 11개, 훅 6개(민감 파일 · 위험 명령 차단, 수정 파일 검사, 검증 없이 종료 알림)
+- 구성과 흐름은 [.claude/README.md](.claude/README.md), 요청하는 법과 설정 근거는 [zz_claude_guide.md](zz_claude_guide.md)
+- 작업 기록은 `zz_docs/`(CHANGELOG · TODO · LOGIC)에 쌓는다. `LOGIC.md`에는 지금 들어 있는 모듈 · API · 에러 코드가 정리돼 있다
 
 ## 폴더 구조
 
@@ -41,11 +47,11 @@ backend/app/
 
 frontend/src/
 ├── container/                 라우터가 가리키는 페이지 (admin / client)
-├── component/                 재사용 UI (common 아래 공통 컴포넌트)
-├── hooks/ context/ types/ utils/
+├── component/                 재사용 UI (admin/ui · client/ui 아래 공통 컴포넌트)
+├── hooks/ context/ constants/ types/ utils/
 ```
 
-도메인 모듈은 `모델 · repository · service · router` 4파일 세트로 만들고, 외부 서비스 연동은 `infra/` 아래 service 만 둡니다. 새 도메인을 추가할 때는 `module/__init__.py` 에 모델 import 와 라우터 등록을 넣고, `ServiceProvider` 에 lazy-load 프로퍼티를 추가합니다.
+도메인 모듈은 `모델 · repository · service · router` 4파일 세트로 만들고, 외부 서비스 연동은 `infra/` 아래 service 만 둡니다. 새 도메인을 추가할 때는 `module/__init__.py` 에 모델 import 와 라우터 등록을 넣고, `ServiceProvider` 에 lazy-load 프로퍼티를 추가합니다. 자세한 규칙은 `.claude/rules/`에 있습니다.
 
 ## 시작하기
 
@@ -67,4 +73,6 @@ npm run dev             # http://localhost:5173
 
 갱신 이력은 [CHANGELOG.md](CHANGELOG.md) 에 날짜별로 적습니다.
 
-새 프로젝트로 쓸 때 바꿀 것: 프로젝트명 · DB 이름 · OAuth 클라이언트 · 쿠키 도메인 · CORS 허용 주소 · 테마 색.
+새 프로젝트로 쓸 때 바꿀 것: 프로젝트명(`frontend/src/constants/app.ts`의 `APP_NAME`) · DB 이름 · OAuth 클라이언트 · 쿠키 도메인 · CORS 허용 주소 · 테마 색(Claude Code에서 `/palette`).
+
+`.claude/settings.json`은 `git commit` · `push`를 승인 없이 허용합니다. 원하지 않으면 `permissions.allow`에서 빼거나 `/permissions`로 바꾸세요.

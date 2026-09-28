@@ -1,4 +1,3 @@
-// 역할: Google 로그인 버튼(리다이렉트 방식). 인증 페이지로 이동시키고 콜백은 /google/login 이 받는다
 import google from "@/assets/client/login/google.svg";
 
 interface GoogleLoginBtnProps {
@@ -21,7 +20,6 @@ const GoogleLoginBtn = ({
     const searchParams = new URLSearchParams(window.location.search);
     const next = searchParams.get("next");
 
-    // next 가 있으면 state 에 실어 콜백에서 그 경로로 복귀한다
     const stateObj = next ? { next, isPopup: true } : {};
     const state = encodeURIComponent(JSON.stringify(stateObj));
     const scopeQuery = scopeParam ? `&scope=${encodeURIComponent(scopeParam)}` : "";
@@ -33,11 +31,11 @@ const GoogleLoginBtn = ({
 
   return (
     <button
-      className={`flex items-center justify-center gap-3 w-full py-3.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 transition-all active:scale-[0.98] shadow-sm ${className}`}
+      className={`flex items-center justify-center gap-3 w-full py-3.5 rounded-2xl border border-line bg-bg-card hover:bg-bg-hover transition-all active:scale-[0.98] shadow-sm ${className}`}
       onClick={handleClick}
     >
       <img src={google} alt="google login" className="w-5 h-5" />
-      <span className="font-semibold text-slate-700 text-sm">Google로 로그인</span>
+      <span className="font-semibold text-text-main text-sm">Google로 로그인</span>
     </button>
   );
 };

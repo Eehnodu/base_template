@@ -1,4 +1,3 @@
-// 역할: 관리자 사이드바. 접힌 상태에서는 아이콘만 보이고 그룹 메뉴는 hover 플라이아웃으로 대체된다
 import GroupLink from "./groupLink";
 import SubLink from "./subLink";
 import Logo from "@/assets/profile.png";
@@ -9,6 +8,7 @@ import { useEffect, useState } from "react";
 import { AdminSidebarProps } from "@/types/admin/sidebar";
 import { parseUserInfo } from "@/hooks/common/getCookie";
 import Modal from "@/component/admin/ui/feedback/modal";
+import { APP_NAME } from "@/constants/app";
 
 const AdminSidebar = ({
   collapsed,
@@ -28,9 +28,7 @@ const AdminSidebar = ({
   }, [collapsed]);
   const logoutMutation = usePost<void, void>("api/auth/logout_admin");
   const user = parseUserInfo("admin");
-  const roleLabel = user?.role === "MD" ? "MD" : "관리자";
 
-  // 로그아웃은 확인 모달을 거친다. 서버가 쿠키를 지운 뒤 로그인 페이지로 이동
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => navigate("/admin/login"),
@@ -73,7 +71,7 @@ const AdminSidebar = ({
   `}
           >
             <h1 className="text-xl font-bold whitespace-nowrap tracking-tight">
-              Admin
+              {APP_NAME}
             </h1>
           </div>
 
@@ -113,17 +111,17 @@ const AdminSidebar = ({
           <div className="group flex items-center h-[62px] relative">
             <div className="flex items-center justify-center w-16 shrink-0">
               <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-white font-bold text-xs shrink-0">
-                {user?.email?.[0]?.toUpperCase() ?? "A"}
+                {user?.user_nickname?.[0]?.toUpperCase() ?? "A"}
               </div>
             </div>
             <div
               className={`transition-all duration-300 ease-in-out overflow-hidden ${collapsed ? "opacity-0 w-0" : "opacity-100 w-full"}`}
             >
               <p className="text-xs font-bold text-white truncate w-28">
-                {user?.email ?? ""}
+                {user?.user_nickname ?? ""}
               </p>
               <p className="text-[10px] text-zinc-400 truncate w-28">
-                {roleLabel}
+                관리자
               </p>
             </div>
             <button

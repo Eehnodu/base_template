@@ -1,4 +1,3 @@
-// 역할: 폼 입력용 모달. 헤더/푸터 구성이 옵션이고 ESC·오버레이 클릭으로 닫힌다
 import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
 import { X } from "lucide-react";
 import Button from "@/component/client/ui/form/button";
@@ -78,8 +77,6 @@ const FormModal = ({
 
   if (!open) return null;
 
-  // 모달 안에서 드래그를 시작해 바깥에서 마우스를 떼면 click 이 오버레이에서 발생한다.
-  // mousedown 위치까지 확인해 그 경우에는 닫히지 않게 한다
   const handleOverlayMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     mouseDownOnOverlay.current = e.target === e.currentTarget;
   };
@@ -111,7 +108,7 @@ const FormModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-center justify-center bg-overlay"
+      className="fixed inset-0 z-40 flex items-center justify-center bg-overlay/30"
       onMouseDown={handleOverlayMouseDown}
       onClick={handleOverlayClick}
     >

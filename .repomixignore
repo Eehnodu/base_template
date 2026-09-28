@@ -1,0 +1,12 @@
+# repomix 로 코드베이스를 묶어 외부 LLM 에 올릴 때 제외할 것.
+# base 는 private 라 .env 를 git 에 추적하므로 .gitignore 만으로는 안 빠진다. Secretlint 도 형식이 맞는 값만 잡는다.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+# 참고 자료 · 작업 기록은 코드 분석에 불필요하고 외부로 내보내지 않는다
+zz_claude100/
+zz_docs/
+.claude/last-verify.json

@@ -1,4 +1,3 @@
-// 역할: Google 콜백 처리. URL 의 code 를 서버에 넘겨 쿠키 세션을 만들고, 팝업이면 부모 창에 알린 뒤 닫는다
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "@/hooks/common/useAPI";
@@ -23,11 +22,13 @@ const GoogleCallback = ({ apiURL, redirectURL, onSuccess, onError }: GoogleCallb
       return;
     }
 
-    // state 에는 로그인 후 돌아갈 next 와 팝업 여부를 JSON 으로 실어 보냈다. 파싱 실패는 무시하고 기본 경로로
     let stateObj: { next?: string; isPopup?: boolean } = {};
     try {
       if (rawState) stateObj = JSON.parse(decodeURIComponent(rawState));
-    } catch {}
+    } catch {
+      // state 가 없거나 깨져 있으면 기본값(일반 로그인, 메인 이동)으로 진행한다
+      stateObj = {};
+    }
 
     const exchange = async () => {
       try {
@@ -43,7 +44,6 @@ const GoogleCallback = ({ apiURL, redirectURL, onSuccess, onError }: GoogleCallb
           return;
         }
 
-        // 팝업 모드: 부모 창에 성공을 알리고 스스로 닫는다. origin 을 명시해 다른 사이트가 메시지를 못 받게 한다
         if (stateObj.isPopup && window.opener) {
           window.opener.postMessage({ type: "GOOGLE_LOGIN_SUCCESS", next: stateObj.next }, window.location.origin);
           window.close();

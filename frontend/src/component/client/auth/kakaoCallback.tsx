@@ -1,13 +1,12 @@
-// 역할: Kakao 콜백 처리. code 를 서버에 넘겨 세션 쿠키를 받고 Context 를 갱신한다
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePost } from "../common/useAPI";
-import { parseUserInfo } from "../common/getCookie";
-import { useAuth } from "../common/useAuth";
+import { usePost } from "@/hooks/common/useAPI";
+import { parseUserInfo } from "@/hooks/common/getCookie";
+import { useAuth } from "@/hooks/common/useAuth";
 
 interface KakaoProps {
-  onSuccess?: (data) => void;
-  onError?: (error) => void;
+  onSuccess?: (data: unknown) => void;
+  onError?: (error: { status?: number; message?: string }) => void;
   autoRun?: boolean;
   redirectURL: string;
   apiURL: string;
@@ -56,7 +55,7 @@ const KakaoCallBack = ({
       onSuccess?.(data);
       navigate(redirectURL, { replace: true });
     } catch (err) {
-      onError?.(err);
+      onError?.(err as { status?: number; message?: string });
     }
   };
 

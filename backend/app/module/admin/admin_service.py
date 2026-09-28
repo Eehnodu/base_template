@@ -1,4 +1,3 @@
-# 역할: 관리자 도메인 비즈니스 로직
 from app.module.admin.admin import Admin
 from app.module.admin.admin_repository import AdminRepository
 

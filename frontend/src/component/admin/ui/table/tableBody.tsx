@@ -1,5 +1,4 @@
-// 역할: 테이블 본문. 데이터 행과 rowCount 를 맞추기 위한 빈 행을 그린다
-import type { Column } from "./table";
+import type { Column, TableRow } from "./table";
 
 /**
  * TableBody 컴포넌트 Props
@@ -8,16 +7,16 @@ import type { Column } from "./table";
  * @property data          렌더링할 실제 데이터 배열
  * @property rowSizeClass  테이블 행 높이/텍스트 크기 클래스 (Table 컴포넌트에서 계산해 전달)
  * @property striped       줄무늬(지브라) 스타일 적용 여부
- * @property rowCount      고정 행 수. 데이터가 적으면 빈 행으로 채운다
+ * @property rowCount      행 개수
  * @property onRowClick    각 행 클릭 시 호출되는 콜백
  */
 interface TableBodyProps {
   columns: Column[];
-  data: any[];
+  data: TableRow[];
   rowSizeClass: string;
   striped: boolean;
   rowCount?: number;
-  onRowClick?: (row: any) => void;
+  onRowClick?: (row: TableRow) => void;
 }
 
 /**
@@ -27,6 +26,7 @@ interface TableBodyProps {
  * - render 속성이 있는 경우 커스텀 렌더링 적용
  * - striped 옵션이 true면 홀수 행에 배경색 적용
  * - onRowClick이 전달되면 각 행 클릭 가능
+ * - 데이터가 없을 경우 “데이터가 없습니다.” 메시지 출력
  *
  * @example 기본 사용
  * ```tsx
@@ -46,7 +46,6 @@ const TableBody = ({
   rowCount,
   onRowClick,
 }: TableBodyProps) => {
-  // rowCount 보다 데이터가 적으면 빈 행을 채워 페이지 전환 시 표 높이가 흔들리지 않게 한다
   const target = rowCount && rowCount > 0 ? rowCount : data.length;
   const emptyCount = Math.max(0, target - data.length);
   return (
@@ -75,7 +74,7 @@ const TableBody = ({
                   key={col.key}
                   className={`px-3 py-2.5 align-middle ${alignClass} ${index < data.length - 1 ? "border-b border-line" : ""}`}
                 >
-                  {col.render ? col.render(row) : ((row as any)[col.key] ?? "")}
+                  {col.render ? col.render(row) : (row[col.key] ?? "")}
                 </td>
               );
             })}

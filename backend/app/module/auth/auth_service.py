@@ -1,4 +1,4 @@
-# 역할: 이메일/비밀번호 인증 로직과 Argon2 비밀번호 해시
+# app/module/auth/auth_service.py
 
 from passlib.context import CryptContext
 
@@ -7,8 +7,6 @@ from app.module.admin.admin_repository import AdminRepository
 from app.module.auth.auth_token import AuthToken
 from app.module.user.user_repository import UserRepository
 
-# Argon2: 메모리 하드 해시로 GPU 무차별 대입에 강하다.
-# deprecated="auto" 덕분에 나중에 스킴을 바꿔도 기존 해시는 그대로 검증된다
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def hash_password(password: str) -> str:
@@ -32,7 +30,7 @@ class AuthService:
         
         original = await self.user_repo.get_user_by_email(email)
         if original:
-            fail("user already exists", "USER_ALREADY_EXISTS", 409)
+            fail("이미 가입된 이메일입니다.", "USER_ALREADY_EXISTS", 409)
         else:
             hashed_password = hash_password(password)
             await self.user_repo.create_user(email, nickname, hashed_password)
@@ -49,9 +47,15 @@ class AuthService:
         elif auth_type == "admin":
             user_obj = await self.admin_repo.get_admin_by_email(email)
         else:
-            fail("invalid type", "INVALID_TYPE", 400)
-        # 계정 없음과 비밀번호 불일치를 같은 응답으로 묶어 계정 존재 여부를 노출하지 않는다
-        if not user_obj or not verify_password(password, user_obj.password if auth_type == "admin" else user_obj.password):
-            fail("user does not exists", "USER_DOES_NOT_EXISTS", 404)
+            fail("잘못된 로그인 유형입니다.", "INVALID_TYPE", 400)
+        # OAuth 로 가입한 사용자는 password 가 없다 — 비밀번호 로그인 불가
+        if not user_obj or not user_obj.password or not verify_password(password, user_obj.password):
+            # 사용자 없음 · 비밀번호 틀림을 구분하지 않는다 (가입 여부 노출 방지).
+            # 401 은 쓰지 않는다 — 프론트가 401 을 받으면 세션 갱신부터 시도한다
+            fail("이메일 또는 비밀번호가 올바르지 않습니다.", "INVALID_CREDENTIALS", 400)
 
         return user_obj, auth_type
+
+
+
+    

@@ -1,4 +1,3 @@
-// 역할: 관리자 상단 헤더. 현재 경로에 맞는 메뉴 라벨·아이콘과 테마 토글
 import { type LucideIcon } from "lucide-react";
 import { useLocation } from "react-router-dom";
 

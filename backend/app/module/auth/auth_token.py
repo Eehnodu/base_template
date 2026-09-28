@@ -1,4 +1,4 @@
-# 역할: JWT access/refresh 발급·검증과 쿠키 설정. 토큰은 httponly 쿠키로만 오간다
+# app/module/auth/auth_token.py
 
 import base64
 import json
@@ -6,32 +6,24 @@ import uuid
 from datetime import timedelta
 
 import jwt
-from fastapi import HTTPException
 
 from app.core.config.settings import settings
 from app.core.database.base import now_kst
+from app.core.utils.response import fail
 
 
 class AuthToken:
-    # 클래스 속성은 인스턴스 없이 참조하는 곳을 위한 기본값. __init__ 에서 같은 값으로 다시 설정된다
-    env = getattr(settings, "env", "dev")
-    samesite = "None" if env == "prod" else "Lax"
-    domain = "none.net" if env == "prod" else None
-
     def __init__(self):
         self.jwt_secret = settings.jwt_secret
         self.hash_key = settings.hash_key
         self.algorithm = "HS256"
-        self.env = getattr(settings, "env", "dev")
-        # 운영은 프론트와 API 도메인이 달라 크로스사이트 쿠키가 되므로 SameSite=None + secure 가 필요하다 (HTTPS 전제).
-        # 로컬은 HTTP 라 secure 를 못 켜므로 Lax 로 두어 같은 사이트 요청에 쿠키가 붙게 한다
+        self.env = settings.env
         self.samesite = "None" if self.env == "prod" else "Lax"
-        # 운영 쿠키 도메인 — 프로젝트마다 교체. None 이면 현재 호스트에만 붙는다
-        self.domain = "none.net" if self.env == "prod" else None
+        # 운영 쿠키 도메인은 .env 의 PROD_COOKIE_DOMAIN
+        self.domain = settings.cookie_domain
         self.secure = True if self.env == "prod" else False
     
     # --- 쿠키 접두사 생성 ---
-    # user_/admin_ 을 나눠 한 브라우저에서 사용자·관리자 세션이 공존해도 서로 덮어쓰지 않는다
     def _cookie_prefix(self, auth_type: str):
         return "admin_" if auth_type == "admin" else "user_"
 
@@ -41,7 +33,7 @@ class AuthToken:
 
         access_token = cookies.get(f"{prefix}access_token")
         if not access_token:
-            raise HTTPException(status_code=401, detail="ACCESS_TOKEN_MISSING")
+            fail("로그인이 필요합니다.", "ACCESS_TOKEN_MISSING", 401)
 
         try:
             payload = jwt.decode(
@@ -50,16 +42,15 @@ class AuthToken:
                 algorithms=[self.algorithm],
             )
         except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail="ACCESS_TOKEN_EXPIRED")
+            fail("로그인이 만료되었습니다.", "ACCESS_TOKEN_EXPIRED", 401)
         except jwt.InvalidTokenError:
-            raise HTTPException(status_code=401, detail="ACCESS_TOKEN_INVALID")
+            fail("로그인 정보가 올바르지 않습니다.", "ACCESS_TOKEN_INVALID", 401)
 
-        # refresh 토큰을 access 자리에 넣어 쓰는 것과, 다른 권한의 토큰을 섞어 쓰는 것을 막는다
         if payload.get("type") != "access":
-            raise HTTPException(status_code=401, detail="INVALID_TOKEN_TYPE")
+            fail("로그인 정보가 올바르지 않습니다.", "INVALID_TOKEN_TYPE", 401)
 
         if payload.get("user") != auth_type:
-            raise HTTPException(status_code=401, detail="INVALID_TOKEN_TYPE")
+            fail("로그인 정보가 올바르지 않습니다.", "INVALID_TOKEN_TYPE", 401)
 
         return int(payload["sub"]), payload["user"]
 
@@ -78,8 +69,6 @@ class AuthToken:
         now_kr = now_kst()
         prefix = self._cookie_prefix(type)
 
-        # access 1시간 / refresh 6시간. access 가 짧아야 탈취 피해가 작고,
-        # 갱신은 프론트가 401 을 받으면 자동으로 하므로 사용자는 체감하지 않는다
         access_payload = {
             "sub": str(user.id),
             "user": type,
@@ -104,11 +93,12 @@ class AuthToken:
             "created_at": user.created_at.isoformat() if user.created_at else None, 
         }
 
-        # 닉네임 등 비ASCII 값을 쿠키에 안전하게 담기 위해 JSON → base64
+        # 공통 쿠키 설정
         encoded_info = base64.b64encode(
             json.dumps(session_info, ensure_ascii=False).encode("utf-8")
         ).decode("utf-8")
 
+        # 프론트에서 읽어야 하므로 httponly=False
         cookie_common = {
             "secure": self.secure,
             "samesite": self.samesite,
@@ -118,8 +108,6 @@ class AuthToken:
         if self.domain:
             cookie_common["domain"] = self.domain
 
-        # user_info 는 프론트가 화면 표시용으로 읽어야 하므로 httponly=False.
-        # 토큰 두 개는 JS 에서 읽지 못하도록 httponly=True
         response.set_cookie(
             key=f"{prefix}user_info",
             value=encoded_info,
@@ -144,8 +132,6 @@ class AuthToken:
             **cookie_common,
         )
 
-        # refresh_exp: refresh 와 같은 수명의 JS 가독 쿠키. 값은 의미 없고,
-        # 프론트는 존재 여부만으로 "아직 갱신 가능한 세션인지" 를 판단한다
         response.set_cookie(
             key=f"{prefix}refresh_exp",
             value=jwt.encode({"uuid": str(uuid.uuid4())}, settings.jwt_secret, algorithm="HS256"),
@@ -159,12 +145,12 @@ class AuthToken:
         - auth_type: "user" | "admin"
         """
         if auth_type not in ("user", "admin"):
-            raise HTTPException(status_code=400, detail="INVALID_AUTH_TYPE")
+            fail("잘못된 인증 유형입니다.", "INVALID_AUTH_TYPE", 400)
 
         prefix = self._cookie_prefix(auth_type)
         refresh_token = request.cookies.get(f"{prefix}refresh_token")
         if not refresh_token:
-            raise HTTPException(status_code=401, detail="REFRESH_TOKEN_MISSING")
+            fail("다시 로그인해 주세요.", "REFRESH_TOKEN_MISSING", 401)
 
         try:
             payload = jwt.decode(
@@ -173,24 +159,23 @@ class AuthToken:
                 algorithms=[self.algorithm],
             )
         except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail="REFRESH_TOKEN_EXPIRED")
+            fail("로그인이 만료되었습니다. 다시 로그인해 주세요.", "REFRESH_TOKEN_EXPIRED", 401)
         except jwt.InvalidTokenError:
-            raise HTTPException(status_code=401, detail="INVALID_REFRESH_TOKEN")
+            fail("다시 로그인해 주세요.", "INVALID_REFRESH_TOKEN", 401)
 
         if payload.get("type") != "refresh":
-            raise HTTPException(status_code=401, detail="INVALID_TOKEN_TYPE")
+            fail("로그인 정보가 올바르지 않습니다.", "INVALID_TOKEN_TYPE", 401)
 
         user_id = payload.get("sub")
         token_type = payload.get("user")
 
         if not user_id or token_type != auth_type:
-            raise HTTPException(status_code=401, detail="INVALID_REFRESH_PAYLOAD")
+            fail("다시 로그인해 주세요.", "INVALID_REFRESH_PAYLOAD", 401)
 
         return int(user_id), auth_type
 
     async def delete_token(self, response, auth_type: str):
         """토큰 삭제 및 로그아웃 처리"""
-        # 발급 때와 같은 domain/path 를 줘야 브라우저가 같은 쿠키로 인식해 지운다
         prefix = self._cookie_prefix(auth_type)
         cookie_common = {
             "secure": self.secure,

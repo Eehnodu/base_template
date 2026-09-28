@@ -1,4 +1,3 @@
-# 역할: WebSocket 요청 단위 DI 컨테이너. HTTP 의 ServiceProvider 와 같은 lazy 패턴
 from fastapi import Depends, WebSocket
 
 from app.core.database.base import get_session
@@ -26,7 +25,6 @@ class WebSocketProvider:
             self._gpt_service = GPTService(self.redis_service)
         return self._gpt_service
 
-    # 연결 목록(ConnectionManager)을 모든 소켓이 공유해야 하므로 요청마다 만들지 않고 모듈 싱글톤을 쓴다
     @property
     def web_socket_service(self):
         if not self._web_socket_service:

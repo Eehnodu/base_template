@@ -1,4 +1,3 @@
-# 역할: 요청 ID 를 담는 ContextVar. 비동기 요청이 섞여도 각 요청의 값이 분리된다
 from contextvars import ContextVar
 
 request_id_var: ContextVar[str] = ContextVar("request_id", default="-")

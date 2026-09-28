@@ -18,8 +18,14 @@ backend/media/*
 !backend/media/.keep
 *.log
 
+# Claude Code: 설정(.claude/)은 커밋하고 개인 설정 · 훅 마커 · 로그만 제외
+.claude/settings.local.json
+.claude/last-verify.json
+.claude/command-log.ndjson
+.claude/*.local.*
+.claude/hooks/__pycache__/
+
 # tools
-.claude/
 .mcp.json
 .vscode/
 .idea/

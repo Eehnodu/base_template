@@ -2,6 +2,17 @@
 
 템플릿은 파생 프로젝트에서 검증된 변경을 되가져오는 방식으로 갱신합니다. 날짜별로 무엇을 왜 바꿨는지만 적습니다.
 
+## 2026-09-28
+
+- Claude Code 설정 포함. `.claude/`(규칙 6 · 스킬 16 · 에이전트 11 · 훅 6 · 권한), `CLAUDE.md`, `zz_claude_guide.md`, `zz_docs/` 뼈대. 구성과 흐름은 `.claude/README.md`. 새 프로젝트에서 `/feature` · `/design` · `/fullstack` · `/fix` · `/verify` · `/review`를 바로 쓸 수 있다.
+- 보안: `/api/user/me`가 비밀번호 해시를 내보내던 문제, OAuth 사용자의 일반 로그인이 500을 내던 문제, Google · Kakao 토큰 응답 검사 위치.
+- 에러 처리 통일. 백엔드는 예상한 실패를 모두 `fail(메시지, 에러코드, 상태코드)`로 내고, 프론트는 `ApiError` 하나로 받는다. 조회 실패는 `ErrorState` + 다시 시도, 빈 목록은 `EmptyState`. 에러 코드 목록은 `zz_docs/LOGIC.md`.
+- TypeScript `strict` 켬. 남아 있던 고정색을 테마 토큰으로 교체, 다크모드 danger 버튼 글자 대비 1.9:1 → 9.3:1.
+- 소셜 로그인 컴포넌트를 `hooks/auth/` → `component/client/auth/`로 이동(훅이 아니라 컴포넌트). 안 쓰던 `App.css` · Apple SDK · `core/database/redis.py` 제거.
+- 마이크 오디오 워크릿(`public/audio/resamplePcmProcessor.js`) 추가. 없어서 `useAudioWs`가 동작하지 않았다.
+- CORS 허용 주소 · 운영 쿠키 도메인을 환경변수로(`PROD_CORS_ORIGINS` · `PROD_COOKIE_DOMAIN`).
+- 검사 스크립트: `backend/scripts/check_routes.py`(등록된 API 목록), `frontend/scripts/check_contrast.py`(색 토큰 대비, 라이트 · 다크).
+
 ## 2026-09-22
 
 - 빈 리비전 자동 삭제가 작동하지 않던 문제. alembic 템플릿이 `upgrade`/`downgrade` 마다 docstring 을 넣기 시작하면서, 내용 판정이 docstring 을 본문으로 세어 빈 리비전도 "내용 있음" 이 됐다. 판정에서 주석과 함께 docstring 도 제외한다. 그동안 모델 변경 없이 `migrate.sh` 를 돌릴 때마다 빈 리비전이 쌓이고 DB 에 그대로 적용되고 있었다.

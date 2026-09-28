@@ -1,4 +1,3 @@
-# 역할: WebSocket 연결용 로그인 데코레이터. 핸드셰이크 쿠키의 토큰을 검증해 websocket 객체에 사용자 정보를 심는다
 from functools import wraps
 
 from fastapi import HTTPException, WebSocket
@@ -10,8 +9,6 @@ def with_login_web_socket(type: str = "user"):
     """
     WebSocket용 로그인 필수 (기본: user)
     admin API에서는 with_login_web_socket("admin") 사용
-
-    브라우저 WebSocket 은 커스텀 헤더를 붙일 수 없으므로 핸드셰이크에 실려 오는 쿠키로 인증한다
     """
     def decorator(func):
         @wraps(func)
@@ -31,14 +28,14 @@ def with_login_web_socket(type: str = "user"):
     return decorator
 
 
-def without_login_web_socket(func):
+def without_login_web_socket(func):  # (type: str = "user") 처럼 인자를 받는 구조를 제거
     """
     로그인이 필요 없는 WebSocket 연결용 데코레이터
     """
 
     @wraps(func)
     async def wrapper(p, websocket: WebSocket, *args, **kwargs):
-        # 비로그인 연결도 서비스에서 같은 속성을 읽을 수 있도록 guest 값을 채운다
+        # 인증 없이 기본값 주입
         websocket.user_id = "guest_user"
         websocket.auth_type = "guest"
 

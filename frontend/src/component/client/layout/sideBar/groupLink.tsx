@@ -1,4 +1,3 @@
-// 역할: 사이드바 그룹 메뉴. 펼침 토글과, 접힌 사이드바에서 hover 시 고정 위치 플라이아웃
 import { GroupProps } from "@/types/admin/sidebar";
 import SubLink from "./subLink";
 import { useLocation } from "react-router-dom";
@@ -28,12 +27,10 @@ const GroupLink = ({ item, collapsed }: GroupProps) => {
     }
   };
 
-  // 아이콘에서 플라이아웃으로 마우스를 옮기는 사이 잠깐 벗어나도 닫히지 않게 100ms 지연
   const scheduleHide = () => {
     hideTimer.current = setTimeout(() => setHovered(false), 100);
   };
 
-  // 사이드바가 overflow-hidden 이라 안에 그릴 수 없다. fixed 로 빼고 아이콘의 화면 좌표를 top 으로 쓴다
   const handleMouseEnter = () => {
     cancelHide();
     if (iconRef.current) {

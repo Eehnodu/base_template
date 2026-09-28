@@ -1,0 +1,11 @@
+media/*
+!media/.keep
+
+venv/
+__pycache__/
+*.pyc
+migrations/
+
+alembic/README
+
+.venv/

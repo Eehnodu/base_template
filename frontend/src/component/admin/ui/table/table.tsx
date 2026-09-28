@@ -1,4 +1,3 @@
-// 역할: 컬럼 정의 기반 테이블. rowCount 를 주면 빈 행을 채워 페이지마다 높이가 일정하게 유지된다
 import TableHeader from "./tableHeader";
 import TableBody from "./tableBody";
 
@@ -20,14 +19,18 @@ export type Align = "left" | "center" | "right";
  * @property width   개별 컬럼 가로 너비 (예: "150px" 또는 "20%")
  * @property align   정렬(left/center/right)
  * @property render  셀 커스텀 렌더 함수(row → ReactNode)
- * @property icon    헤더 텍스트 옆에 붙는 아이콘
+ * @property rowCount 행 개수
  */
+// 행 데이터는 화면마다 모양이 달라 필드를 자유롭게 읽을 수 있게 둔다
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TableRow = Record<string, any>;
+
 export interface Column {
   key: string;
   header: string;
   width?: string;
   align?: Align;
-  render?: (row: any) => React.ReactNode;
+  render?: (row: TableRow) => React.ReactNode;
   icon?: React.ReactNode;
 }
 
@@ -40,15 +43,15 @@ export interface Column {
  * @property striped    홀/짝 줄 배경색 적용 여부
  * @property className  외부 wrapper 커스텀 클래스
  * @property onRowClick 행 클릭 시 호출되는 콜백(row 전달)
- * @property rowCount   고정 행 수. 데이터가 적으면 빈 행으로 채운다
+ * @property rowCount 행 개수
  */
 interface TableProps {
   columns: Column[];
-  data: any[];
+  data: TableRow[];
   size?: Size;
   striped?: boolean;
   className?: string;
-  onRowClick?: (row: any) => void;
+  onRowClick?: (row: TableRow) => void;
   rowCount?: number;
   icon?: React.ReactNode;
 }

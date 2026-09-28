@@ -1,30 +1,38 @@
-// 역할: 관리자 사이드바. 접힌 상태에서는 아이콘만 보이고 그룹 메뉴는 hover 플라이아웃으로 대체된다
 import GroupLink from "./groupLink";
 import SubLink from "./subLink";
 import Logo from "@/assets/profile.png";
 import { LogOut, SidebarCloseIcon, SidebarOpenIcon } from "lucide-react";
 import { usePost } from "@/hooks/common/useAPI";
+import { useAuth } from "@/hooks/common/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { AdminSidebarProps } from "@/types/admin/sidebar";
-import { parseUserInfo } from "@/hooks/common/getCookie";
+import { useEffect, useState } from "react";
+import { ClientSidebarProps } from "@/types/client/sidebar";
 import Modal from "@/component/client/ui/feedback/modal";
+import { APP_NAME } from "@/constants/app";
 
-const Sidebar = ({
-  collapsed,
-  adminMenu,
-  onToggleSidebar,
-}: AdminSidebarProps) => {
+const Sidebar = ({ collapsed, menu, onToggleSidebar }: ClientSidebarProps) => {
   const navigate = useNavigate();
+  const { user, setUser } = useAuth();
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
-  const logoutMutation = usePost<void, void>("api/auth/logout_admin");
-  const user = parseUserInfo("admin");
-  const roleLabel = user?.role === "MD" ? "MD" : "관리자";
 
-  // 로그아웃은 확인 모달을 거친다. 서버가 쿠키를 지운 뒤 로그인 페이지로 이동
+  /* 접힘 · 펼침 전환(300ms) 중에는 hover 로 뜨는 토글을 숨긴다.
+     접는 순간 마우스가 아직 헤더 위에 있어 반대쪽 아이콘이 잠깐 비치던 문제 */
+  const [transitioning, setTransitioning] = useState(false);
+  useEffect(() => {
+    setTransitioning(true);
+    const timer = window.setTimeout(() => setTransitioning(false), 320);
+    return () => window.clearTimeout(timer);
+  }, [collapsed]);
+
+  const logoutMutation = usePost<void, void>("api/auth/logout");
+
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
-      onSuccess: () => navigate("/admin/login"),
+      onSuccess: () => {
+        setUser(null);
+        setLogoutModalOpen(false);
+        navigate("/");
+      },
     });
   };
 
@@ -37,16 +45,17 @@ const Sidebar = ({
       `}
     >
       <div className="flex h-full flex-col">
+        {/* 헤더 영역 */}
         <div className="group flex h-16 items-center flex-shrink-0 border-b border-line relative overflow-hidden text-text-main">
           <div className="relative flex items-center justify-center w-16 h-full shrink-0 z-10">
             <img
               src={Logo}
               alt="Profile"
               className={`h-6 w-6 object-contain transition-opacity duration-200
-        ${collapsed ? "group-hover:opacity-0" : "opacity-100"}`}
+        ${collapsed && !transitioning ? "group-hover:opacity-0" : "opacity-100"}`}
             />
 
-            {collapsed && (
+            {collapsed && !transitioning && (
               <div
                 onClick={onToggleSidebar}
                 className="absolute inset-0 flex items-center justify-center z-20 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200"
@@ -63,11 +72,11 @@ const Sidebar = ({
   `}
           >
             <h1 className="text-xl font-bold whitespace-nowrap tracking-tight">
-
+              {APP_NAME}
             </h1>
           </div>
 
-          {!collapsed && (
+          {!collapsed && !transitioning && (
             <div
               onClick={onToggleSidebar}
               className="absolute right-4 top-1/2 -translate-y-1/2 z-20 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200"
@@ -77,9 +86,10 @@ const Sidebar = ({
           )}
         </div>
 
+        {/* 메뉴 리스트 */}
         <nav className="flex-1 overflow-y-auto px-2 py-6">
           <div className="flex flex-col gap-y-1">
-            {adminMenu.map((item, idx) =>
+            {menu.map((item, idx) =>
               item.type === "link" ? (
                 <SubLink
                   key={`${item.to}-${idx}`}
@@ -97,35 +107,36 @@ const Sidebar = ({
           </div>
         </nav>
 
-        <div className="flex-shrink-0 border-t border-line overflow-hidden">
-          <div className="group flex items-center h-[62px] relative">
-            <div className="flex items-center justify-center w-16 shrink-0">
-              <div className="w-8 h-8 rounded-full bg-bg-sub flex items-center justify-center text-text-main font-bold text-xs shrink-0">
-                {user?.email?.[0]?.toUpperCase() ?? "A"}
+        {/* 프로필 + 로그아웃 (로그인한 경우만) */}
+        {user && (
+          <div className="flex-shrink-0 border-t border-line overflow-hidden">
+            <div className="group flex items-center h-[62px] relative">
+              <div className="flex items-center justify-center w-16 shrink-0">
+                <div className="w-8 h-8 rounded-full bg-bg-sub flex items-center justify-center text-text-main font-bold text-xs shrink-0">
+                  {user.user_nickname?.[0]?.toUpperCase() ?? "U"}
+                </div>
               </div>
-            </div>
-            <div
-              className={`transition-all duration-300 ease-in-out overflow-hidden ${collapsed ? "opacity-0 w-0" : "opacity-100 w-full"}`}
-            >
-              <p className="text-xs font-bold text-text-main truncate w-28">
-                {user?.email ?? ""}
-              </p>
-              <p className="text-[10px] text-text-sub truncate w-28">
-                {roleLabel}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setLogoutModalOpen(true)}
-              className={`shrink-0 text-text-sub hover:text-red-400 transition-colors duration-200 flex items-center justify-center ${collapsed
-                ? "absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 group-hover:bg-bg-hover"
-                : "mr-3 p-1.5"
+              <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden ${collapsed ? "opacity-0 w-0" : "opacity-100 w-full"}`}
+              >
+                <p className="text-xs font-bold text-text-main truncate w-28">
+                  {user.user_nickname}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setLogoutModalOpen(true)}
+                className={`shrink-0 text-text-sub hover:text-error transition-colors duration-200 flex items-center justify-center ${
+                  collapsed
+                    ? "absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 group-hover:bg-bg-hover"
+                    : "mr-3 p-1.5"
                 }`}
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <Modal

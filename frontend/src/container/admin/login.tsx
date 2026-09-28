@@ -1,4 +1,3 @@
-// 역할: 관리자 로그인 페이지. 이미 세션이 있으면 대시보드로 보낸다
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePost, useRefreshToken } from "@/hooks/common/useAPI";
@@ -35,7 +34,6 @@ const LoginPage = () => {
     );
   };
 
-  // 로그인 쿠키가 살아 있는 상태로 다시 들어오면 갱신 후 바로 /admin 으로
   useEffect(() => {
     if (user && isRefresh) {
       refresh()

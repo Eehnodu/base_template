@@ -1,4 +1,3 @@
-# 역할: 관리자 조회 쿼리. 비즈니스 로직은 두지 않는다
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 

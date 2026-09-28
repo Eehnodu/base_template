@@ -1,4 +1,4 @@
-// 역할: 브라우저 전용 전역 타입 보강 (Web Speech API)
+// src/types/global.d.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 declare global {

@@ -1,4 +1,3 @@
-// 역할: 상단 중앙 토스트. duration 이 지나면 자동으로 onClose 를 호출한다
 import { useEffect } from "react";
 import { AlertCircle, CheckCircle, Info, TriangleAlert, X } from "lucide-react";
 
@@ -25,8 +24,6 @@ const Toast = ({
   closable = true,
   className = "",
 }: ToastProps) => {
-  // 자동 닫힘. 닫히거나 언마운트되면 clearTimeout 으로 뒤늦은 onClose 호출을 막는다.
-  // onClose 가 매 렌더 새로 만들어지면 타이머가 재시작되므로 호출 측에서 useCallback 으로 고정하는 것이 안전
   useEffect(() => {
     if (!open) return;
     if (!duration || duration <= 0) return;
@@ -37,10 +34,10 @@ const Toast = ({
   if (!open) return null;
 
   const colors = {
-    info: "bg-blue-50 text-blue-800 border border-blue-200",
-    success: "bg-green-50 text-green-800 border border-green-200",
-    warning: "bg-yellow-50 text-yellow-800 border border-yellow-300",
-    error: "bg-red-50 text-red-800 border border-red-200",
+    info: "bg-info-bg text-info border border-info/30",
+    success: "bg-success-bg text-success border border-success/30",
+    warning: "bg-warning-bg text-warning border border-warning/30",
+    error: "bg-error-bg text-error border border-error/30",
   }[type];
 
   const icon = {
@@ -84,7 +81,7 @@ const Toast = ({
           <button
             type="button"
             onClick={onClose}
-            className="ml-1 p-1 rounded hover:bg-black/10"
+            className="ml-1 p-1 rounded hover:bg-bg-hover"
           >
             <X className="w-3.5 h-3.5" />
           </button>

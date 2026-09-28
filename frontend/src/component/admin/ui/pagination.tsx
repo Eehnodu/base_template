@@ -1,4 +1,3 @@
-// 역할: 페이지 그룹 단위 페이지네이션. visibleCount 개씩 묶어 이전/다음 그룹으로 이동한다
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type PaginationSize = "sm" | "md";
@@ -40,10 +39,8 @@ const Pagination = ({
 
   const count = Math.max(1, Math.min(visibleCount, totalPages));
 
-  // total 이 줄어 page 가 범위를 벗어나도 마지막 페이지로 보정
   const currentPage = Math.min(Math.max(1, page), totalPages);
 
-  // 현재 페이지가 속한 그룹의 첫 페이지 (5개 단위면 1, 6, 11 …)
   const start = Math.floor((currentPage - 1) / count) * count + 1;
 
   const end = Math.min(totalPages, start + count - 1);
