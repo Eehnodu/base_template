@@ -18,9 +18,14 @@
       "Bash(git log *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(grep *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(wc *)"
     ],
-    "ask": ["Bash(./migrate.sh *)", "Bash(alembic *)", "Bash(gh pr create *)"],
     "deny": [
       "Read(./**/.env)",
       "Read(./**/.env.local)",
@@ -34,7 +39,8 @@
       "Edit(./**/.env.*.local)",
       "Read(./**/*.pem)",
       "Read(./**/*.key)"
-    ]
+    ],
+    "ask": ["Bash(./migrate.sh *)", "Bash(alembic *)", "Bash(gh pr create *)"]
   },
   "hooks": {
     "SessionStart": [
