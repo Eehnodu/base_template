@@ -98,6 +98,8 @@ import Table from "@/component/admin/ui/table/table";
 
 ## 로딩 상태
 
+언제 무엇을 쓸지(대기 시간별 기준 · 깜빡임 · 타임아웃)는 `loading.md`. 여기는 컴포넌트 위치만 적는다.
+
 | 상황 | 쓸 것 |
 | ---- | ----- |
 | 첫 조회(`isLoading`) | `PageSkeleton` 또는 `Skeleton`. 화면 구조가 먼저 보여서 데이터가 와도 레이아웃이 튀지 않는다. |

@@ -81,6 +81,7 @@ base/
 | `rules/frontend/components.md` | 공통 컴포넌트 위치와 props |
 | `rules/frontend/conventions.md` | 네이밍, API 훅, 컴포넌트 작성 스타일, 색상 토큰, 화면 품질 |
 | `rules/frontend/design.md` | 화면 디자인 기준 — 위계 · 색 · 모션 · 피할 패턴 · 만들기 전 절차 · 기존 화면 고치는 순서 |
+| `rules/frontend/loading.md` | 로딩 표시 기준 — 대기 시간별(0.1 · 1 · 3 · 10초) 스피너 · 스켈레톤 · 진행률 · 취소, 깜빡임 막기, 타임아웃, 접근성 |
 | `rules/backend/module.md` | 도메인 모듈 4파일 세트, 라우터 · ServiceProvider · repository 패턴 |
 | `rules/backend/infra.md` | 외부 서비스 연동 모듈 |
 | `rules/writing.md` | 글쓰기 기준 — 문서 · 커밋 · PR · 보고에서 AI 냄새(강조하는 척 · 3개 나열 · 대시 · 장식 볼드 · 챗봇 잔재) 빼기, 답장은 결정부터 |
