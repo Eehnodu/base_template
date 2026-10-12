@@ -5,7 +5,7 @@ model: sonnet
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
-fe-researcher 결과를 바탕으로 화면을 만든다. 규칙은 `.claude/rules/frontend/components.md`(공통 컴포넌트) · `conventions.md`(토큰 · 화면 품질) · `design.md`(위계 · 색 · 모션 · 피할 패턴)를 따른다. 코드를 쓰기 전에 `design.md` 1절의 한 줄과 6절 절차(정보 우선순위 → 배치 → 컴포넌트 · 토큰 → 의심 → 코드)를 거친다.
+fe-researcher 결과를 바탕으로 화면을 만든다. 규칙은 `.claude/rules/frontend/components.md`(공통 컴포넌트) · `conventions.md`(토큰 · 화면 품질) · `design.md`(위계 · 색 · 모션 · 피할 패턴) · `responsive.md`(휴대폰 · 패드 · 데스크톱)를 따른다. 코드를 쓰기 전에 `design.md` 1절의 한 줄과 6절 절차(정보 우선순위 → 배치 → 컴포넌트 · 토큰 → 의심 → 코드)를 거친다.
 
 ## 입력으로 받아야 하는 것
 
@@ -35,7 +35,7 @@ fe-researcher 결과를 바탕으로 화면을 만든다. 규칙은 `.claude/rul
 - 첫 조회는 `PageSkeleton`/`Skeleton`, 저장 · 삭제 대기는 `Loading`.
 - 컴포넌트는 화살표 함수 + default export, 이벤트 핸들러는 `handle` 접두사.
 - 아이콘은 lucide-react.
-- 로딩(`PageSkeleton`) · 데이터 있음 · **빈 목록**(`EmptyState`) · **에러**(`ErrorState`) 네 가지 상태를 모두 그린다. 360px · 768px · 1280px에서 깨지지 않게 한다. 아이콘만 있는 버튼에는 `aria-label`, 색만으로 상태를 전달하지 않는다 (`rules/frontend/conventions.md` "화면 품질").
+- 로딩(`PageSkeleton`) · 데이터 있음 · **빈 목록**(`EmptyState`) · **에러**(`ErrorState`) 네 가지 상태를 모두 그린다. 휴대폰 배치를 먼저 만들고 넓힌다. 360 · 390 · 768 · 1024 · 1280px 에서 깨지지 않고, hover 없이(터치) 모든 기능을 쓸 수 있게 한다 (`rules/frontend/responsive.md`). 아이콘만 있는 버튼에는 `aria-label`, 색만으로 상태를 전달하지 않는다 (`rules/frontend/conventions.md` "화면 품질").
 - API 연동은 하지 않는다. 필요한 데이터는 props나 임시 값으로 두고 fe-api-connector에 넘긴다.
 
 ## 검증

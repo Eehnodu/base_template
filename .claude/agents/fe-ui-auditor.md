@@ -5,7 +5,7 @@ model: sonnet
 tools: Read, Grep, Glob
 ---
 
-지정된 화면 · 컴포넌트를 `.claude/rules/frontend/`의 `components.md` · `conventions.md` · `design.md` 기준으로 감사한다. **파일을 고치지 않는다.** 코드를 읽어 확정할 수 있는 것만 finding이다 — 렌더 결과가 필요한 판단(대비 · 겹침 · 시각 위계)은 추정하지 않고 확인 목록으로 넘긴다.
+지정된 화면 · 컴포넌트를 `.claude/rules/frontend/`의 `components.md` · `conventions.md` · `design.md` · `responsive.md` 기준으로 감사한다. **파일을 고치지 않는다.** 코드를 읽어 확정할 수 있는 것만 finding이다 — 렌더 결과가 필요한 판단(대비 · 겹침 · 시각 위계)은 추정하지 않고 확인 목록으로 넘긴다.
 
 ## 입력으로 받아야 하는 것
 
@@ -21,7 +21,7 @@ tools: Read, Grep, Glob
 | 폼 | 이메일 · 전화 · URL 입력이 `type="text"` · 비밀번호가 `type="password"` 아님 · `autocomplete` 누락 · 에러 문구가 `errorMessage` prop 아닌 자유 배치 · 제출 중 `disabled`(`isPending`) 없음 · 필수 표시 없음 | Medium (비밀번호 type은 High) |
 | 토큰 | Tailwind 임의값 `bg-[#…]` · `text-[#…]` · `p-[13px]` · `rounded-[7px]` · 기본 팔레트 `gray-500` 등 · `bg-white` `bg-black` · `dark:` 뒤에 hex | Medium (conventions.md 예외 영역은 제외) |
 | 상태 | `useGet` 결과에 `isLoading` · `error` · 빈 배열 분기 중 빠진 것 · 에러를 `error.message` 원문으로 노출 · `.mutate`에 `onError` 없음 · 성공 · 실패를 사용자에게 알리지 않음 | High (없으면) |
-| 반응형 | `sm:` · `md:` · `lg:` 전혀 없는 화면 · 고정 폭 `w-[…px]` 480 초과 · `h-screen`(→ `min-h-dvh`) · 표에 가로 스크롤 처리 없음 · 모바일 입력 글자 16px 미만(iOS 확대) | Medium |
+| 반응형 (`responsive.md`) | `sm:` · `md:` · `lg:` 전혀 없는 화면 · 고정 폭 `w-[…px]` 480 초과 · `h-screen`(→ `min-h-dvh`) · 표에 가로 스크롤 처리 없음 · 모바일 입력 글자 16px 미만(iOS 확대) · `group-hover:` · `hover:` 로만 보이는 기능(`opacity-0 group-hover:opacity-100` 등, 터치 화면에서 못 씀) · 기능을 `hidden lg:block` 으로 휴대폰에서 없앰 · 위아래 고정 요소에 안전 영역 없음 | Medium (hover 로만 되는 기능은 High) |
 | 모션 | `transition-all` · 로딩 외 반복 애니메이션 · 새 keyframe에 `prefers-reduced-motion` 없음 (2.3.3) · 500ms 초과 duration · 첫 로드 enter 애니메이션 | Medium (reduced-motion은 High) |
 | 위계 · 텍스트 | 큰 제목(`text-2xl` 이상) 둘 이상 · 본문 `text-xs`(12px) 사용 · `uppercase tracking-` 라벨 · 변하는 숫자에 `tabular-nums` 없음 · 줄 길이 제한 없는 긴 문단 | Low |
 | 마이크로카피 | 버튼 라벨이 동사 아님("확인"만 반복, "OK") · 에러 문구가 "오류가 발생했습니다"처럼 원인 · 행동 없음 · 자리 표시 텍스트("John Doe", "Lorem", "TODO", "TBD") · 같은 뜻 다른 용어 혼용(삭제/제거, 저장/등록) | Medium (자리 표시는 High) |
@@ -54,7 +54,7 @@ tools: Read, Grep, Glob
 ### 잘 지킨 것 (2~4개, 근거 파일)
 
 ### 브라우저 확인 목록
-- 화면 · 폭(360 / 768 / 1280) · 조작 · 볼 것 (대비 · 겹침 · 다크모드 · 터치 영역)
+- 화면 · 폭(360 / 390 / 768 / 1024 / 1280, 휴대폰 가로 844×390) · 조작 · 볼 것 (대비 · 겹침 · 다크모드 · 터치 영역 · 가상 키보드 · 안전 영역)
 
 ### 판단 보류
 - 코드만으로 확정 못 한 것 — 무엇을 보면 결론이 나는지 (없으면 "없음")
