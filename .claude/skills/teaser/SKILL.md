@@ -124,30 +124,29 @@ $ARGUMENTS 로 짧은 홍보 영상을 만든다. 이야기 · 화면 · 소리 
 - 음성 내레이션은 하지 않는다. 필요하면 사용자가 따로 요청한다.
 ## 3. 만들기 · 확인 (통과 조건: 모든 장면과 전환 중간의 정지 화면을 직접 봤고 문제 0)
 
-도구는 이 컴퓨터에 있는 것으로 고른다. 먼저 확인한다: `ffmpeg -version`, `node --version`, 프로젝트에 Playwright(`@playwright/test` · `playwright`)가 있는지.
+도구는 이 컴퓨터에 있는 것으로 고른다. 먼저 확인한다: `ffmpeg -version`, `node --version`, 프로젝트에 Playwright(`@playwright/test` · `playwright`)가 있는지. 없으면 **설치하지 않고** 사용자에게 무엇이 필요한지 말한다 (새 의존성은 승인 대상).
 
-- 권장 방식: 영상용 HTML 한 장(`work/composition.html`)을 만들고, 헤드리스 브라우저로 프레임마다 찍어 ffmpeg 로 묶는다. 모든 프레임은 **시간 t 만의 순수 함수**로 그린다 (`window.renderAt(t)` 같은 함수로 상태를 정하고 찍는다. 실시간 애니메이션 · `setTimeout` 에 기대지 않는다). 찍기 전에 글꼴 · 이미지 로드를 기다린다 (`document.fonts.ready`, `img.decode()`).
-- 프로젝트의 Playwright 는 `channel: "chrome"`(설치된 크롬)으로 쓸 수 있다. 실행 스크립트는 `work/`에 두고, 모듈은 프로젝트의 `node_modules`에서 불러온다.
-- 도구가 없으면 **설치하지 않고** 사용자에게 무엇이 필요한지 말한다. 프로젝트에 패키지를 추가하는 것은 새 의존성이라 승인 대상이다.
+**처음부터 짜지 않는다.** `/promo` 스킬의 `assets/`(엔진 · 부품 · 스크립트 · 틀)를 같이 쓴다. 쓰는 법과 함정은 `promo/assets/PARTS.md`.
 
-전체 렌더 전에 장면마다 한 장, 전환 중간마다 한 장을 뽑아 Read 로 직접 본다. 넘침 · 겹침 · 잘림 · 낮은 대비 · 빈 화면을 고친다. 복잡한 두 화면의 단순 크로스페이드는 이중 노출처럼 탁해진다. 앞 내용을 빼고 새 내용을 넣거나, 배경색을 한 번 거친다.
+```bash
+SK=<스킬 폴더>/promo/assets
+mkdir -p <출력>/work && cd <출력>/work
+cp $SK/*.mjs $SK/engine.js $SK/parts.css $SK/template/* .
+export PW_FROM=<프로젝트에서 @playwright/test 가 깔린 폴더>
+```
+
+- 실제 화면: 틀 `capture.mjs`를 채운다 (사이트 화면은 1280x720 `dsf 3`, 개발 서버 오류 창 확인 · 앱 안내 문구 숨기기는 `capture-lib.mjs`가 한다). 찍은 것은 한 장에 모아 바로 본다.
+- 영상: 틀 `composition.html` · `timeline.js`를 장면표대로 채운다. 모든 프레임은 **시간 t 만의 순수 함수**(`renderAt(f)`), 전환은 `V.placeScenes`, 글자 등장은 `V.blurSlide`. 읽는 글은 `.read`(66px) · 보조는 `.read-sub`(44px).
+- 확인 프레임: `node render.mjs v1 <프레임...>` — 장면마다 한 장, 전환 중간마다 한 장. 한 장에 모아 Read 로 본다. 넘침 · 겹침 · 잘림 · 낮은 대비 · 빈 화면을 고친다. 복잡한 두 화면의 단순 크로스페이드는 이중 노출처럼 탁해진다. 앞 내용을 빼고 새 내용을 넣거나, 배경색을 한 번 거친다.
+- 전체 렌더: `node render.mjs` — 자동 검사(장면 밖으로 새는 요소 · 글자 크기 · 1배 아래 확대) 뒤 브라우저 4개 병렬.
+- 소리: `sfx.js`를 채우고 `node synth.mjs`.
 
 ## 4. 렌더 · 전달
 
-1. `teaser.mp4` 렌더: H.264, `-pix_fmt yuv420p`, `-movflags +faststart`, 소리 AAC.
-2. 포스터: 가장 강한 장면이 **다 자리 잡은** 순간(글자가 다 들어왔고 나가기 전)을 장면표 시간으로 골라 뽑는다. 전환 중이면 0.1~0.3초씩 옮겨 다시 뽑는다.
-   ```bash
-   ffmpeg -ss 3.2 -i teaser.mp4 -frames:v 1 -q:v 2 teaser.jpg
-   ```
-3. 포스터를 0번째 프레임에 굽는다. 대부분의 플랫폼(슬랙 · X · 디스코드)은 첫 프레임을 썸네일로 쓴다. 프레임을 **추가하지 않고 바꾼다**. 길이 · 프레임 수 · 소리 싱크가 그대로다.
-   ```bash
-   ffmpeg -y -i teaser.mp4 -i teaser.jpg \
-     -filter_complex "[0:v][1:v]overlay=0:0:enable='eq(n,0)'[v]" \
-     -map "[v]" -map "0:a?" -c:v libx264 -crf 18 -preset slow -pix_fmt yuv420p \
-     -c:a copy -movflags +faststart teaser.poster.mp4 && mv teaser.poster.mp4 teaser.mp4
-   ```
-4. `ffprobe` 로 길이 · 해상도 · fps 가 계획과 맞는지 확인한다.
-5. `share-copy.txt`: 1~3문장, 그대로 올릴 수 있게, 이 프로젝트만의 내용, 톤에 맞게. "기쁜 마음으로 공유합니다" 같은 범용 문구 금지.
+1. `node finish.mjs --name teaser --poster <프레임>` — 묶기(H.264 · `yuv420p` · AAC · `+faststart`), 포스터 `teaser.jpg`를 0번째 프레임에 굽기, `ffprobe`, 소리 싱크 측정, 컨택트 시트를 한 번에.
+2. 포스터 프레임: 가장 강한 장면이 **다 자리 잡은** 순간(글자가 다 들어왔고 나가기 전). 대부분의 플랫폼(슬랙 · X · 디스코드)은 첫 프레임을 썸네일로 쓰고, 프레임을 추가하지 않고 바꾸므로 길이 · 소리 싱크가 그대로다.
+3. 출력의 길이 · 해상도 · fps 가 계획과 맞는지, 싱크가 0샘플인지 확인하고, 컨택트 시트(`work/qa/contact-final.jpg`)로 전체 흐름을 본다.
+4. `share-copy.txt`: 1~3문장, 그대로 올릴 수 있게, 이 프로젝트만의 내용, 톤에 맞게. "기쁜 마음으로 공유합니다" 같은 범용 문구 금지.
 
 ## 보고
 

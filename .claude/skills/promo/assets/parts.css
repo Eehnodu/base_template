@@ -1,0 +1,62 @@
+/* 영상 부품 기본 스타일. 색 · 글꼴은 composition.html 의 :root 변수로 프로젝트마다 바꾼다 */
+:root {
+  --brand: #02787D;        /* 강조색 (말풍선 테두리 · 지목 · 윤곽) */
+  --ink: #12302F;          /* 밝은 바탕 위 글자 */
+  --paper: #F6F1E7;        /* 글자 카드 바탕 */
+  --font: "SUIT", "Malgun Gothic", sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--brand); }
+body { font-family: var(--font); -webkit-font-smoothing: antialiased; word-break: keep-all; }
+
+/* 장면: placeScenes 가 visibility · transform 을 정한다 */
+.scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+.w { display: inline-block; }
+#flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+#plate { position: absolute; top: 0; height: 1080px; width: 3280px; pointer-events: none; visibility: hidden; }
+
+/* 글자 크기 하한 (craft.md Q11): .read 64px 이상, .read-sub 37px 이상. render.mjs 검사가 이 클래스를 본다 */
+.read { font-size: 66px; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; }
+.read-sub { font-size: 44px; font-weight: 600; }
+.title { font-size: 120px; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+
+/* 기기 카드 (녹화 무대를 담는 둥근 틀) — 안의 .zoom 을 crashZoom 이 움직인다 */
+.card { position: absolute; border-radius: 36px; overflow: hidden; background: #000;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.32), 0 0 0 2px rgba(255, 255, 255, 0.10); }
+.card .zoom { position: absolute; inset: 0; transform-origin: 0 0; }
+.card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.overlay { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+
+/* 사이트 창 (브라우저 화면 캡처를 담는 틀) */
+.frame { position: absolute; border-radius: 26px; overflow: hidden; background: #fafafa;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.08); }
+.frame img { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* 자막 알약 (사이트 화면 위) */
+.pill-cap { position: absolute; left: 0; right: 0; display: flex; justify-content: center; }
+.pill-cap p { background: rgba(18, 48, 47, 0.92); color: #fff; font-weight: 700; padding: 22px 48px; border-radius: 999px; }
+
+/* 글자 카드 */
+.paper { background: var(--paper); display: flex; align-items: center; justify-content: center; }
+.paper h3 { position: relative; font-size: 132px; font-weight: 800; color: #1F1A14; letter-spacing: -0.03em; }
+.paper em { font-style: normal; color: var(--brand); position: relative; display: inline-block; }
+.paper svg { position: absolute; left: -6%; width: 112%; height: 46px; bottom: -30px; overflow: visible; }
+
+/* 확대 말풍선: <div class="callout"><span class="txtv read"></span><span class="caret"></span><span class="tag read-sub"></span></div> */
+.callout { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 18px; white-space: nowrap; opacity: 0;
+  background: #fff; color: var(--ink); font-weight: 800; line-height: 1; padding: 22px 40px; border-radius: 999px;
+  border: 5px solid var(--brand); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.30); transform-origin: 50% 50%; }
+.callout .txtv { font-size: 72px; font-weight: 800; line-height: 1; }
+.callout .caret { width: 6px; height: 72px; border-radius: 3px; }
+.callout .tag { font-weight: 800; background: #fff; padding: 10px 22px; border-radius: 999px; }
+
+/* 돋보기: <div class="loupe"><img></div> <div class="loupe-tag read-sub">라벨</div> <svg class="loupe-line"></svg> */
+.loupe { position: absolute; width: 300px; height: 300px; border-radius: 50%; overflow: hidden; border: 6px solid var(--brand); background: #fff;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.30); visibility: hidden; }
+.loupe img { position: absolute; left: 0; top: 0; transform-origin: 0 0; max-width: none; }
+.loupe-tag { position: absolute; color: #fff; font-weight: 800; padding: 10px 26px; border-radius: 999px; white-space: nowrap; visibility: hidden; }
+.loupe-line { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; pointer-events: none; }
+
+/* 커서 · 물결 */
+.cursor { position: absolute; left: 0; top: 0; width: 64px; height: 64px; transform-origin: 6px 4px; opacity: 0; }
+.ripple { position: absolute; left: 0; top: 0; width: 160px; height: 160px; margin: -80px 0 0 -80px; border-radius: 50%; border: 6px solid var(--brand); opacity: 0; }

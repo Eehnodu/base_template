@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>영상</title>
+<link rel="stylesheet" href="parts.css" />
+<style>
+  /* 프로젝트 글꼴 · 색. 글꼴 파일은 work/ 에 복사해 상대 경로로 (file:// 에서 외부 글꼴은 안 불러올 수 있음) */
+  /* @font-face { font-family: "SUIT"; src: url("SUIT-Variable.woff2") format("woff2"); font-weight: 100 900; } */
+  :root { --brand: #02787D; --ink: #12302F; --paper: #F6F1E7; }
+  #open { background: var(--brand); display: flex; align-items: center; justify-content: center; }
+  #open h1 { color: #fff; font-size: 180px; font-weight: 900; letter-spacing: -0.04em; }
+  #game { background: #2B4560; color: #fff; }
+  #game .card { left: 210px; top: 100px; width: 730px; height: 880px; }
+  #game .stage { position: absolute; inset: 0; background: linear-gradient(180deg, #34506d, #7a95ad); }
+  #game .word { position: absolute; left: 470px; top: 160px; background: #fff; color: #222; font-size: 22px; padding: 6px 14px; border-radius: 999px; }
+  #game .txt { position: absolute; left: 1060px; top: 300px; width: 820px; }
+  #outro { background: var(--brand); }
+  #outro .mini { position: absolute; left: 0; top: 0; width: 300px; height: 362px; border-radius: 24px; box-shadow: 0 24px 60px rgba(0,0,0,.3); }
+  #outro .name { position: absolute; left: 0; right: 0; top: 440px; text-align: center; color: #fff; font-size: 170px; font-weight: 900; }
+</style>
+</head>
+<body>
+  <!-- 장면마다 <section class="scene" id="SHOTS 의 이름">. 읽는 글은 .read(64px 이상) · 보조는 .read-sub(37px 이상) -->
+  <section id="open" class="scene"><h1><span class="w">제품</span> <span class="w">이름</span></h1></section>
+
+  <section id="t1" class="scene paper"><h3><span class="w">이렇게</span> <em class="w">쓰는<svg viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M2 7 Q30 3.5 52 5 T98 3.5" stroke="#02787D" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.5" pathLength="1" stroke-dasharray="1 1"/></svg></em> <span class="w">제품</span></h3></section>
+
+  <section id="game" class="scene">
+    <div class="card"><div class="zoom"><div class="stage"></div><div class="word">단어</div></div>
+      <svg class="overlay" id="lock" viewBox="0 0 730 880" style="width:730px;height:880px"></svg></div>
+    <div class="callout" id="call"><span class="txtv"></span><span class="caret"></span><span class="tag read-sub">맞혔어요</span></div>
+    <div class="loupe" id="lo"><img alt="" /></div><div class="loupe-tag read-sub" id="loTag">확대</div><svg class="loupe-line" id="loLine"></svg>
+    <div class="txt"><h2 class="title"><span class="w">기능</span> <span class="w">이름</span></h2>
+      <p class="read" style="margin-top:36px"><span class="w">무엇을</span> <span class="w">하는지</span><br /><span class="w">한 줄로</span></p></div>
+  </section>
+
+  <section id="outro" class="scene">
+    <div class="mini" id="m0" style="background:#2B4560"></div><div class="mini" id="m1" style="background:#6B4428"></div>
+    <p class="name"><span class="w">제품 이름</span></p>
+  </section>
+
+  <div id="plate"></div>
+  <div id="flash"></div>
+
+<script src="engine.js"></script>
+<script src="timeline.js"></script>
+<script>if (!window.SEQ_COUNT) window.SEQ_COUNT = {};</script>
+<script src="seq-count.js" onerror="void 0"></script>
+<script>
+const { SHOTS, ENTER, BEATS: B } = window.TL;
+const { $, $$, byId, ramp, set, blurSlide, E } = V;
+V.setToken({ dur: 24, land: [0.34, 1.56, 0.64, 1] });   // craft.md 움직임 성격 표에서 고른 값
+const local = (id, f) => f - SHOTS[id].start;
+const vis = (id) => byId(id).style.visibility === "visible";
+const CARD = { w: 730, h: 880 };
+
+window.renderAt = async (f) => {
+  V.placeScenes(f, SHOTS, ENTER);
+  if (vis("open")) blurSlide($$("#open .w"), local("open", f), B.open.wordIn, 5, 24, 90, 22);
+  if (vis("t1")) V.titleCard(byId("t1"), local("t1", f), B.title);
+  if (vis("game")) {
+    const t = local("game", f), b = B.game, sc = byId("game");
+    blurSlide($$(".title .w", sc), t, 10, 4, 22, 70, 18);
+    blurSlide($$(".read .w", sc), t, 16, 2, 18, 30, 9);
+    V.callout(byId("call"), t, { word: "단어", keys: [b.typeAt, b.typeAt + 4.2], enter: b.enterAt, cx: 575, cy: 880, tagAt: b.enterAt, off: b.enterAt + 20 });
+    V.lockOn(byId("lock"), t, { x: 450, y: 140, w: 140, h: 60, start: b.lockStart, at: b.lockAt, end: b.lockEnd, label: "지목" });
+    V.crashZoom($(".zoom", sc), t, { from: b.punchFrom, at: b.punch, zmax: 2.2, P: { x: 520, y: 170 }, target: { x: 365, y: 330 }, ...CARD });
+    V.loupe(byId("lo"), byId("loTag"), byId("loLine"), t, { src: window.LOUPE_SRC, cell: { x: 520, y: 170 }, cellScr: { x: 730, y: 270 }, center: { x: 600, y: 600 }, zoom: 2, start: 66, end: 84 });
+  }
+  if (vis("outro")) {
+    const u = local("outro", f), b = B.outro;
+    V.flyIn(byId("m0"), u, { x: 120, y: 80, r: -8, fx: -800, fy: -200, start: b.cardsStart });
+    V.flyIn(byId("m1"), u, { x: 1500, y: 80, r: 8, fx: 800, fy: -200, start: b.cardsStart + 5 });
+    blurSlide($$("#outro .name .w"), u, b.logoLand - 10, 0, 20, 60, 16);
+  }
+  await V.flush();
+};
+
+window.ready = async () => {
+  await document.fonts.ready;
+  // 시험용 돋보기 소재 (실제 영상에서는 seq 프레임 경로)
+  const c = document.createElement("canvas"); c.width = 730; c.height = 880;
+  const x = c.getContext("2d"); x.fillStyle = "#4a6884"; x.fillRect(0, 0, 730, 880); x.fillStyle = "#fff"; x.font = "bold 30px sans-serif"; x.fillText("단어", 490, 180);
+  window.LOUPE_SRC = c.toDataURL();
+  await Promise.all([...document.images].map((img) => (img.getAttribute("src") ? img.decode().catch(() => {}) : null)));
+  return { total: window.TL.TOTAL, shots: Object.keys(SHOTS).length };
+};
+</script>
+</body>
+</html>
