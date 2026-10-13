@@ -28,13 +28,14 @@
 - 에이전트에는 담당 파일 · 계약 · 수용 기준만 넘긴다. 히스토리 · diff 원문을 붙이지 않는다.
 - 끝나면 `zz_docs/`(CHANGELOG · TODO · LOGIC)를 갱신하고 CLAUDE.md "완료 기준"대로 보고한다.
 
-## 스킬 16개
+## 스킬 18개
 
 | 묶음 | 스킬 | 한 줄 |
 | ---- | ---- | ----- |
 | 구현 | `/feature` `/design` `/fullstack` `/refactor` | 요청 정리 → 조사 → 계획 → 실행 → `/verify` → 기록 |
 | 진단 · 점검 | `/debug` `/fix` `/verify` `/review` `/audit` `/challenge` | 원인 조사(수정 없음) / 원인 하나만 수정 / 기계 검증 / diff 리뷰 / 화면 감사 / 설계 반론 |
 | 문서 · 정리 | `/docs` `/pr` `/handoff` `/test` | 코드 근거 문서 / 커밋 · PR / 세션 인수인계 / 테스트 케이스 설계(러너 도입 전 골격) |
+| 영상 | `/teaser` `/promo` | 15~25초 짧은 홍보 영상 / 30~60초 기능 소개 영상 (HTML 프레임 + ffmpeg, 결과는 `video-output/`, 게시 · 유료 API 없음) |
 | 기타 | `/palette` `/explore` | 색 토큰 설계 + 대비 검사 / 외부 레포 분석 후 가져올지 판단 |
 
 경계가 헷갈리는 쌍은 각 SKILL.md description 끝에 적혀 있다 (예: `/debug`는 진단만, 수정은 `/fix`).

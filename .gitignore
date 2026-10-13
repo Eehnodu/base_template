@@ -30,3 +30,6 @@ backend/media/*
 .vscode/
 .idea/
 .DS_Store
+
+# /teaser · /promo 결과 영상 · 중간 프레임
+video-output/

@@ -26,7 +26,7 @@
 
 **Claude Code 설정**
 
-- `CLAUDE.md` + `.claude/`: 규칙(프론트 · 백엔드 · 글쓰기), 스킬 16개(`/feature` · `/design` · `/fullstack` · `/fix` · `/verify` · `/review` · `/audit` 등), 에이전트 11개, 훅 7개(민감 파일 · 위험 명령 차단, 유료 생성 API 호출 승인, 수정 파일 검사, 검증 없이 종료 알림, 세션 시작 상태 주입)
+- `CLAUDE.md` + `.claude/`: 규칙(프론트 · 백엔드 · 글쓰기), 스킬 18개(`/feature` · `/design` · `/fullstack` · `/fix` · `/verify` · `/review` · `/audit` 등), 에이전트 11개, 훅 7개(민감 파일 · 위험 명령 차단, 유료 생성 API 호출 승인, 수정 파일 검사, 검증 없이 종료 알림, 세션 시작 상태 주입)
 - 구성과 흐름은 [.claude/README.md](.claude/README.md), 요청하는 법과 설정 근거는 [zz_claude_guide.md](zz_claude_guide.md)
 - 작업 기록은 `zz_docs/`(CHANGELOG · TODO · LOGIC)에 쌓는다. `LOGIC.md`에는 지금 들어 있는 모듈 · API · 에러 코드가 정리돼 있다
 
