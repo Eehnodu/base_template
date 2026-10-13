@@ -1,0 +1,26 @@
+{
+  "name": "orange-broadside",
+  "title": "주황 대자보",
+  "from": "Broadside (heygen-com/hyperframes frame-presets, Apache-2.0)",
+  "pick": "주장 · 선언이 강한 영상, 개발 도구 · 커뮤니티 · 캠페인. 글자 자체가 화면인 구성",
+  "avoid": "부드럽고 친근해야 하는 제품, 사진 · 화면 캡처가 많은 영상",
+  "motion": "대담 (craft.md) — 글자가 크게 밀려 들어옴, 장식 없음",
+  "token": { "dur": 18, "land": [0.16, 1, 0.3, 1] },
+  "fonts": {
+    "display": { "en": "Barlow", "ko": "Do Hyeon", "weights": [900] },
+    "body": { "en": "Barlow", "ko": "IBM Plex Sans KR", "weights": [400, 600] },
+    "label": { "en": "IBM Plex Mono", "ko": "IBM Plex Sans KR", "weights": [500] }
+  },
+  "colors": {
+    "canvas": "#111111",
+    "canvas2": "#E85D26",
+    "ink": "#F0ECE5",
+    "inkMuted": "#888880",
+    "accent": "#E85D26",
+    "onAccent": "#111111",
+    "surface": "#1A1A18",
+    "border": "#282826"
+  },
+  "remix": { "accents": ["accent", "canvas2"], "keep": [] },
+  "vars": { "--display-weight": 900, "--display-tracking": "-0.03em", "--body-weight": 400, "--r-card": "0px", "--r-pill": "0px", "--border-w": "1px" }
+}

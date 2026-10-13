@@ -1,0 +1,26 @@
+{
+  "name": "red-poster",
+  "title": "빨강 포스터",
+  "from": "Bold Poster (heygen-com/hyperframes frame-presets, Apache-2.0)",
+  "pick": "출시 · 행사 · 한 문장 선언이 중심인 영상. 잡지 표지 같은 큰 제목",
+  "avoid": "정보가 많은 기능 설명, 표 · 그래프 위주 영상",
+  "motion": "대담 (craft.md) — 제목은 기울여 도장 찍듯",
+  "token": { "dur": 18, "land": [0.16, 1, 0.3, 1] },
+  "fonts": {
+    "display": { "en": "Shrikhand", "ko": "Nanum Myeongjo", "weights": [800] },
+    "body": { "en": "Libre Baskerville", "ko": "Gowun Batang", "weights": [400, 700] },
+    "label": { "en": "Space Grotesk", "ko": "Gowun Batang", "weights": [700] }
+  },
+  "colors": {
+    "canvas": "#FFFFFF",
+    "canvas2": "#F5F2EF",
+    "ink": "#1C1410",
+    "inkMuted": "#4A403A",
+    "accent": "#D8000F",
+    "onAccent": "#FFFFFF",
+    "surface": "#F5F2EF",
+    "border": "#1C1410"
+  },
+  "remix": { "accents": ["accent"], "keep": [] },
+  "vars": { "--display-weight": 800, "--display-tracking": "-0.01em", "--body-weight": 400, "--r-card": "0px", "--r-pill": "0px", "--border-w": "3px" }
+}

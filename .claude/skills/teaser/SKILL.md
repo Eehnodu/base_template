@@ -19,6 +19,7 @@ $ARGUMENTS 로 짧은 홍보 영상을 만든다. 이야기 · 화면 · 소리 
 | ---- | ------ |
 | 입력 | 비우면 현재 프로젝트. `http(s)://` 주소나 `example.com` 같은 도메인이면 웹사이트 |
 | `--tone <프리셋 또는 자유 서술>` | 프로젝트를 보고 고른다. 애매하면 `default` |
+| `--style <프리셋>` | 없음 — 프로젝트 색 · 글꼴로. 원하면 `promo/assets/styles/STYLES.md` 6개 중 하나 (`node style.mjs showcase` 로 견본 보고 `use <이름> --brand <브랜드 색>`) |
 | `--format landscape\|vertical\|square` | landscape 1920x1080 (vertical 1080x1920, square 1080x1080), 30fps |
 | `--duration <초>` | 약 20초 (15~25) |
 | `--no-music` · `--no-sfx` | 음악 · 효과음 켬 |
@@ -104,6 +105,8 @@ $ARGUMENTS 로 짧은 홍보 영상을 만든다. 이야기 · 화면 · 소리 
 
 ### 톤
 
+톤(속도 · 장면 수)과 디자인 스타일 프리셋(색 · 글꼴 · 모양)은 따로 고른다. 예: 블록 팝 + chaotic, 코발트 보고서 + polished.
+
 프리셋은 기본값이고, 자유 서술("2016년 가짜 시리즈 A 발표")이 있으면 그것을 살려 가장 가까운 프리셋의 속도만 빌린다.
 
 | 톤 | 느낌 | 장면 · 전환 |
@@ -132,6 +135,7 @@ $ARGUMENTS 로 짧은 홍보 영상을 만든다. 이야기 · 화면 · 소리 
 SK=<스킬 폴더>/promo/assets
 mkdir -p <출력>/work && cd <출력>/work
 cp $SK/*.mjs $SK/engine.js $SK/parts.css $SK/template/* .
+cp -r $SK/styles .                # 디자인 스타일 프리셋을 쓸 때 (STYLES.md)
 export PW_FROM=<프로젝트에서 @playwright/test 가 깔린 폴더>
 ```
 

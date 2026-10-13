@@ -1,0 +1,29 @@
+{
+  "name": "candy-capsule",
+  "title": "캔디 캡슐",
+  "from": "Capsule (heygen-com/hyperframes frame-presets, Apache-2.0)",
+  "pick": "라이프스타일 · 소셜 · 쇼핑처럼 세련되고 밝은 소비자 제품. 잡지 같은 세리프 제목 + 알약 모양",
+  "avoid": "개발 도구 · 기업용, 장면이 아주 빠른 영상(떠 있는 알약 장식이 많아 산만)",
+  "motion": "경쾌 (craft.md) — 알약이 통통 떠오름",
+  "token": { "dur": 27, "land": [0.34, 1.56, 0.64, 1] },
+  "fonts": {
+    "display": { "en": "Bodoni Moda", "ko": "Gowun Batang", "weights": [700] },
+    "body": { "en": "Space Grotesk", "ko": "Gothic A1", "weights": [500, 700] },
+    "label": { "en": "Space Grotesk", "ko": "Gothic A1", "weights": [700] }
+  },
+  "colors": {
+    "canvas": "#F5F5F0",
+    "ink": "#1A1A1A",
+    "inkMuted": "#4A4A46",
+    "accent": "#E85D4E",
+    "accent2": "#8BB4F7",
+    "accent3": "#C4D94E",
+    "accent4": "#F2D160",
+    "accent5": "#C5B5E0",
+    "onAccent": "#1A1A1A",
+    "surface": "#FFFFFF",
+    "border": "#1E1E1E"
+  },
+  "remix": { "accents": ["accent", "accent2", "accent3", "accent4", "accent5"], "keep": [] },
+  "vars": { "--display-weight": 700, "--display-tracking": "-0.01em", "--body-weight": 500, "--r-card": "48px", "--r-pill": "9999px", "--border-w": "2px", "--shadow": "8px 8px 0 rgba(26,26,26,0.08)" }
+}

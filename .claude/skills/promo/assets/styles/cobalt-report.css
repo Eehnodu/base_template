@@ -1,0 +1,10 @@
+/* 코발트 보고서: 따뜻한 크림 바탕에 강조색 하나. 제목은 거의 검정(강조색으로 칠하지 않음), 카드는 옅게 물든 면 + 옅은 테두리, 그림자 없음 */
+.s-h1, .s-h2, .s-h3 { color: var(--ink); }
+.s-stat { font-weight: 700; }
+.s-card { box-shadow: none; }
+.s-eyebrow { letter-spacing: 0.08em; }
+/* 장식은 표지 · 마무리에만: 오른쪽 대각 면 + 점 격자 */
+.s-deco.panel { right: -10%; top: 0; width: 46%; height: 100%; background: var(--surface); border-left: 1.5px solid var(--border-color); transform: skewX(-12deg); }
+.s-deco.dots { right: 120px; top: 96px; width: 120px; height: 120px; background-image: radial-gradient(var(--accent) 3px, transparent 3.5px); background-size: 30px 30px; opacity: 0.35; }
+.s-deco.bar { left: 0; bottom: 0; height: 10px; width: 24%; background: var(--accent); }
+.s-deco.star, .s-deco.stripes, .s-deco.blob, .s-deco.pills, .s-deco.flower { display: none; }

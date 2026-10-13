@@ -10,6 +10,7 @@
 SK=<스킬 폴더>/promo/assets
 mkdir -p work && cp $SK/*.mjs $SK/engine.js $SK/parts.css work/
 cp $SK/template/* work/            # composition.html · timeline.js · sfx.js · capture.mjs 틀
+cp -r $SK/styles work/             # 디자인 스타일 프리셋을 쓸 때
 export PW_FROM=<프로젝트에서 @playwright/test 가 깔린 폴더>   # 예: <repo>/frontend. 없으면 설치하지 말고 사용자에게 묻는다
 ```
 
@@ -44,6 +45,7 @@ CSS `parts.css`: `.scene` `.card` `.frame` `.callout` `.loupe` `.paper` `.pill-c
 | `resample.mjs [이름=crop ...]` | 불규칙한 녹화 프레임을 시각대로 30fps 로, 사건을 프레임 번호로 (`seq/<이름>/events.json`), `seq-count.js` |
 | `render.mjs [--preview] [--workers 4] [판 프레임...]` | 프레임 렌더. 기본 브라우저 4개 병렬, `--preview` 는 960x540. 시작 전에 `audit()` 를 프레임 30개마다 돌려 경고를 보여 준다 (`--strict` 면 경고가 있을 때 멈춤) |
 | `synth.mjs` | 음악(timeline.MUSIC) + 효과음(sfx.js) 로컬 합성 → `audio-music.wav` · `audio-nomusic.wav` (같은 배율) |
+| `style.mjs list · use · fonts · showcase` | 디자인 스타일 프리셋 (`styles/STYLES.md`): 견본 렌더, 브랜드 색 바꾸기(밝기 유지) · 대비 검사, 글꼴(Google Fonts OFL)을 `fonts/`로 받아 렌더 때 인터넷 불필요 |
 | `finish.mjs --name promo --poster 1340` | 묶기(두 판) · 포스터 뽑아 0번 프레임에 굽기 · ffprobe · 소리 싱크 측정 · 컨택트 시트를 한 번에 |
 
 ## 녹화에서 미리 알면 시간을 버는 것

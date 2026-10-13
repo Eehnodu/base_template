@@ -38,7 +38,7 @@ body { font-family: var(--font); -webkit-font-smoothing: antialiased; word-break
 
 /* 글자 카드 */
 .paper { background: var(--paper); display: flex; align-items: center; justify-content: center; }
-.paper h3 { position: relative; font-size: 132px; font-weight: 800; color: #1F1A14; letter-spacing: -0.03em; }
+.paper h3 { position: relative; font-size: 132px; font-weight: 800; color: var(--paper-ink, #1F1A14); letter-spacing: -0.03em; }
 .paper em { font-style: normal; color: var(--brand); position: relative; display: inline-block; }
 .paper svg { position: absolute; left: -6%; width: 112%; height: 46px; bottom: -30px; overflow: visible; }
 

@@ -1,0 +1,10 @@
+/* 빨강 포스터: 흰 바탕 · 진한 잉크 · 빨강 하나. 직각, 그림자 없음(빨강 큰 글자의 겹친 글자 그림자만), 한 장면에 큰 글자 하나 */
+.s-h1 em, .s-h2 em, .s-stat { color: var(--accent); font-style: normal; display: inline-block; transform: rotate(-5deg);
+  text-shadow: 3px 3px 0 var(--ink), 6px 6px 0 rgba(28, 20, 16, 0.25); }
+.s-h1 { line-height: 1.12; }
+.s-card { box-shadow: none; border-left: 12px solid var(--accent); border-top: 0; border-right: 0; border-bottom: 0; background: var(--surface); }
+.s-eyebrow { letter-spacing: 0.2em; }
+.s-body { line-height: 1.75; }
+.s-cta { border-radius: 0; }
+.s-deco.bar { left: 0; bottom: 0; height: 12px; width: 18%; background: var(--accent); }
+.s-deco.panel, .s-deco.dots, .s-deco.star, .s-deco.stripes, .s-deco.blob, .s-deco.pills, .s-deco.flower { display: none; }

@@ -1,0 +1,14 @@
+/* 캔디 캡슐: 글자 담는 모든 틀은 알약(2px 잉크 외곽선), 제목은 잉크색 세리프(색 칠하지 않음), 색은 숫자와 알약 채움에만. 떠 있는 알약 장식은 평평하게(그림자 없음) */
+.s-h1, .s-h2, .s-h3 { color: var(--ink); text-transform: none; }
+.s-stat { color: var(--accent); }
+.s-pill { background: var(--accent4); }
+.s-cta { border: 2px solid var(--border-color); color: var(--ink); }
+.s-h1 em, .s-h2 em { color: var(--accent); }   /* 기울임은 영문 Bodoni 에만 의미가 있어 쓰지 않음 */
+/* 장식: 떠 있는 캔디 알약 몇 개 + 부드러운 빛 */
+.s-deco.pills { inset: 0; background:
+  radial-gradient(circle at 82% 22%, rgba(232, 93, 78, 0.10), transparent 30%),
+  radial-gradient(circle at 15% 80%, rgba(139, 180, 247, 0.12), transparent 30%); }
+.s-deco.pills::before, .s-deco.pills::after { content: ""; position: absolute; height: 56px; border-radius: 9999px; border: 2px solid var(--border-color); }
+.s-deco.pills::before { right: 180px; top: 120px; width: 180px; background: var(--accent2); transform: rotate(-12deg); }
+.s-deco.pills::after { left: 140px; bottom: 140px; width: 150px; background: var(--accent3); transform: rotate(10deg); }
+.s-deco.panel, .s-deco.dots, .s-deco.bar, .s-deco.star, .s-deco.stripes, .s-deco.blob, .s-deco.flower { display: none; }

@@ -4,10 +4,12 @@
 <meta charset="utf-8" />
 <title>영상</title>
 <link rel="stylesheet" href="parts.css" />
+<!-- 디자인 프리셋을 쓰면 node style.mjs use <이름> 이 만든 style.css · style.js (없으면 무시됨). 프리셋 클래스는 styles/base.css (.s-frame .s-h1 .s-lead .s-card ...) -->
+<link rel="stylesheet" href="style.css" />
 <style>
   /* 프로젝트 글꼴 · 색. 글꼴 파일은 work/ 에 복사해 상대 경로로 (file:// 에서 외부 글꼴은 안 불러올 수 있음) */
   /* @font-face { font-family: "SUIT"; src: url("SUIT-Variable.woff2") format("woff2"); font-weight: 100 900; } */
-  :root { --brand: #02787D; --ink: #12302F; --paper: #F6F1E7; }
+  /* 색 기본값은 parts.css :root (--brand --ink --paper). 프로젝트 색을 바꾸려면 여기서 덮되, 프리셋(style.css)을 쓰면 덮지 않는다 */
   #open { background: var(--brand); display: flex; align-items: center; justify-content: center; }
   #open h1 { color: #fff; font-size: 180px; font-weight: 900; letter-spacing: -0.04em; }
   #game { background: #2B4560; color: #fff; }
@@ -44,13 +46,14 @@
   <div id="flash"></div>
 
 <script src="engine.js"></script>
+<script src="style.js" onerror="void 0"></script>
 <script src="timeline.js"></script>
 <script>if (!window.SEQ_COUNT) window.SEQ_COUNT = {};</script>
 <script src="seq-count.js" onerror="void 0"></script>
 <script>
 const { SHOTS, ENTER, BEATS: B } = window.TL;
 const { $, $$, byId, ramp, set, blurSlide, E } = V;
-V.setToken({ dur: 24, land: [0.34, 1.56, 0.64, 1] });   // craft.md 움직임 성격 표에서 고른 값
+V.setToken(window.STYLE?.token ?? { dur: 24, land: [0.34, 1.56, 0.64, 1] });   // 프리셋의 움직임 토큰, 없으면 craft.md 표에서 고른 값
 const local = (id, f) => f - SHOTS[id].start;
 const vis = (id) => byId(id).style.visibility === "visible";
 const CARD = { w: 730, h: 880 };

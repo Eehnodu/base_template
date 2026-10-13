@@ -1,0 +1,11 @@
+/* 주황 대자보: 검정 면과 주황 면 두 가지. 주황은 검정 위의 유일한 강조이거나 화면 전체. 주황 위 글자는 반드시 검정 잉크(크림 금지). 둥근 면 · 그림자 · 그라데이션 없음 */
+.s-frame[data-ground="2"], .s-frame[data-ground="accent"] { background: var(--canvas2); color: var(--on-accent); }
+.s-frame[data-ground="2"] .s-body, .s-frame[data-ground="accent"] .s-body { color: rgba(17, 17, 17, 0.75); }
+.s-frame[data-ground="2"] .s-eyebrow, .s-frame[data-ground="accent"] .s-eyebrow { color: var(--on-accent); }
+.s-eyebrow { letter-spacing: 0.14em; font-weight: 500; }
+.s-eyebrow::before { content: "/ "; }
+.s-stat { color: var(--accent); }
+.s-card { box-shadow: none; border: 0; border-top: 1px solid var(--border-color); background: transparent; padding: 32px 0 0; }
+.s-pill { background: transparent; border: 1px solid var(--border-color); }
+.s-cta { border-radius: 0; }
+.s-deco.panel, .s-deco.dots, .s-deco.bar, .s-deco.star, .s-deco.stripes, .s-deco.blob, .s-deco.pills, .s-deco.flower { display: none; }

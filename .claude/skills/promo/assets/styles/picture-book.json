@@ -1,0 +1,30 @@
+{
+  "name": "picture-book",
+  "title": "그림책",
+  "from": "Daisy Days (heygen-com/hyperframes frame-presets, Apache-2.0)",
+  "pick": "아이 · 가족 · 교육 · 캐주얼 게임처럼 다정하고 둥근 제품. 그림이 있는 앱",
+  "avoid": "기업용 · 금융 · 개발 도구, 진지한 출시 발표",
+  "motion": "친근 · 경쾌 (craft.md) — 둥글게 통통",
+  "token": { "dur": 26, "land": [0.34, 1.56, 0.64, 1] },
+  "fonts": {
+    "display": { "en": "Fredoka", "ko": "Jua", "weights": [600] },
+    "body": { "en": "Quicksand", "ko": "Gowun Dodum", "weights": [500, 700] },
+    "label": { "en": "Quicksand", "ko": "Gowun Dodum", "weights": [700] }
+  },
+  "colors": {
+    "canvas": "#F5F0E6",
+    "canvas2": "#7ECDC0",
+    "ink": "#2D2D2D",
+    "inkMuted": "#5A5A5A",
+    "accent": "#F8635F",
+    "accent2": "#A8E6CF",
+    "accent3": "#A8D8F0",
+    "accent4": "#D4A5E8",
+    "accent5": "#FDE68A",
+    "onAccent": "#FFFFFF",
+    "surface": "#FFFFFF",
+    "border": "#2D2D2D"
+  },
+  "remix": { "accents": ["accent", "accent2", "accent3", "accent4", "accent5", "canvas2"], "keep": [] },
+  "vars": { "--display-weight": 600, "--display-tracking": "0em", "--body-weight": 500, "--r-card": "32px", "--r-pill": "999px", "--border-w": "3px", "--shadow": "6px 6px 0 #2D2D2D" }
+}

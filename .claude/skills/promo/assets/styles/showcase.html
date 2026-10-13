@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>스타일 견본</title>
+<!-- style.mjs showcase 가 ?css=<파일> 로 프리셋 css 를 넣어 찍는다. 문구는 예시(제품 사실 아님) -->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 3840px; height: 2160px; overflow: hidden; background: #888; }
+  .cell { position: absolute; width: 1920px; height: 1080px; overflow: hidden; }
+  .tag { position: absolute; left: 24px; top: 20px; z-index: 9; font: 700 28px sans-serif; color: #fff; background: rgba(0,0,0,.55); padding: 6px 14px; border-radius: 8px; }
+</style>
+<script>document.write(`<link rel="stylesheet" href="${new URLSearchParams(location.search).get("css")}">`);</script>
+</head>
+<body>
+  <div class="cell" style="left:0;top:0"><div class="s-frame">
+    <div class="s-deco panel"></div><div class="s-deco dots"></div><div class="s-deco star"></div><div class="s-deco pills"></div><div class="s-deco flower"></div><div class="s-deco blob"></div><div class="s-deco bar"></div>
+    <div class="s-col" style="position:relative;margin-top:150px;max-width:1150px">
+      <p class="s-eyebrow">제품 소개 · Launch</p>
+      <h1 class="s-h1">설치 없이 <em>바로</em> 시작해요</h1>
+      <p class="s-lead read">브라우저에서 바로 쓰는 도구</p>
+    </div>
+  </div><span class="tag">표지</span></div>
+
+  <div class="cell" style="left:1920px;top:0"><div class="s-frame" data-ground="2">
+    <div class="s-deco stripes"></div>
+    <div class="s-row" style="position:relative;margin-top:80px;align-items:center">
+      <div class="s-card" style="width:620px;height:720px;display:flex;align-items:center;justify-content:center"><span class="s-body">제품 화면 자리</span></div>
+      <div class="s-col" style="max-width:860px">
+        <p class="s-eyebrow">기능 01</p>
+        <h2 class="s-h2">빠른 검색</h2>
+        <p class="s-lead read">이름만 치면 바로 찾아요</p>
+        <div class="s-row" style="gap:20px"><span class="s-pill">검색</span><span class="s-pill">한국어</span><span class="s-pill">Beta</span></div>
+      </div>
+    </div>
+  </div><span class="tag">기능 (바탕 2)</span></div>
+
+  <div class="cell" style="left:0;top:1080px"><div class="s-frame">
+    <div class="s-deco dots"></div>
+    <p class="s-eyebrow" style="position:relative">숫자로 보기 (예시)</p>
+    <h3 class="s-h3" style="position:relative;margin:24px 0 56px">이렇게 빨라요</h3>
+    <div class="s-row" style="position:relative">
+      <div class="s-card" style="flex:1"><div class="s-stat">3초</div><p class="s-body" style="margin-top:20px">결과가 뜨는 시간</p></div>
+      <div class="s-card" style="flex:1"><div class="s-stat">12개</div><p class="s-body" style="margin-top:20px">지원하는 형식</p></div>
+      <div class="s-card" style="flex:1"><div class="s-stat">0원</div><p class="s-body" style="margin-top:20px">가입 · 설치 없이</p></div>
+    </div>
+  </div><span class="tag">숫자</span></div>
+
+  <div class="cell" style="left:1920px;top:1080px"><div class="s-frame" data-ground="accent" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+    <div class="s-deco flower"></div><div class="s-deco blob"></div><div class="s-deco pills"></div>
+    <h2 class="s-h1" style="position:relative">Product 제품</h2>
+    <p class="s-lead read" style="position:relative;margin:28px 0 48px">지금 바로 써 보세요</p>
+    <span class="s-cta" style="position:relative">example.com</span>
+  </div><span class="tag">마무리 (강조색 바탕)</span></div>
+</body>
+</html>

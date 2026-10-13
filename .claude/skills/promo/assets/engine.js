@@ -211,6 +211,25 @@
       if (px < min - 0.5) out.push(`text: ${name} "${el.textContent.trim().slice(0, 16)}" ${px.toFixed(0)}px (하한 ${min}px, 렌더 높이 56 · 32px 에 해당)`);
     }));
     $$(".zoom").forEach((el) => { if (!visible(el)) return; const m = new DOMMatrix(getComputedStyle(el).transform); if (m.a < 0.999) out.push(`zoom: ${el.closest(".scene")?.id} 의 .zoom 이 ${m.a.toFixed(3)}배 — 1배 아래면 가장자리에 틈`); });
+    // style: 디자인 프리셋(style.js 의 window.STYLE)을 쓰면, 화면 글자 · 면의 색과 글꼴이 프리셋 안에 있는지. 캡처 · 부품(.card .frame .loupe .callout svg img .free) 안은 보지 않는다
+    if (root.STYLE?.palette) {
+      const rgbOf = (h) => { h = h.replace("#", ""); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); };
+      const pal = root.STYLE.palette.map(rgbOf), fams = root.STYLE.fonts.map((f) => f.toLowerCase()).concat(["suit", "malgun gothic", "sans-serif"]);
+      const parse = (c) => { const m = c.match(/rgba?\(([^)]+)\)/); if (!m) return null; const v = m[1].split(/[\s,/]+/).filter(Boolean).map(Number); return v.length > 3 && v[3] === 0 ? null : v.slice(0, 3); };
+      const near = (v) => pal.some((p) => Math.abs(p[0] - v[0]) + Math.abs(p[1] - v[1]) + Math.abs(p[2] - v[2]) < 18);
+      const seen = new Set();
+      $$(".scene, .scene *").forEach((el) => {
+        if (!visible(el) || el.closest(".card, .frame, .loupe, .loupe-tag, .callout, .free, svg, img, .cursor, .ripple")) return;
+        const cs = getComputedStyle(el), name = `${el.closest(".scene")?.id} ${el.tagName.toLowerCase()}${el.className ? "." + String(el.className).split(" ")[0] : ""}`;
+        const hasText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+        for (const [what, val] of [["글자색", hasText ? cs.color : "transparent"], ["면 색", cs.backgroundColor]]) {
+          const v = parse(val); if (!v || near(v)) continue;
+          const key = `${what}${v}`; if (!seen.has(key)) { seen.add(key); out.push(`style: ${what} rgb(${v.join(",")}) 가 프리셋(${root.STYLE.name}) 팔레트 밖 — ${name}`); }
+        }
+        const first = cs.fontFamily.split(",")[0].replace(/["']/g, "").trim().toLowerCase();
+        if (hasText && !fams.includes(first) && !seen.has(first)) { seen.add(first); out.push(`style: 글꼴 "${first}" 가 프리셋(${root.STYLE.name}) 밖 — ${name}`); }
+      });
+    }
     return out;
   };
 

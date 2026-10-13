@@ -1,0 +1,14 @@
+/* 그림책: 모든 모양에 3px 숯색 외곽선 + 번지지 않는 오프셋 그림자, 둥근 모서리, 채도 높은 바탕 위 제목은 흰 글자 + 숯색 글자 그림자. 강조 산호색은 작은 표시에만 */
+.s-frame[data-ground="2"] .s-h1, .s-frame[data-ground="2"] .s-h2 { color: #fff; text-shadow: 3px 3px 0 var(--ink); }
+.s-pill { background: var(--accent5); box-shadow: 4px 4px 0 var(--ink); }
+.s-stat { color: var(--ink); }
+.s-cta { border: 3px solid var(--border-color); box-shadow: 6px 6px 0 var(--ink); background: var(--accent5); color: var(--ink); }
+.s-eyebrow { color: var(--ink); letter-spacing: 0.06em; }
+.s-eyebrow::before { content: ""; display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); border: 3px solid var(--ink); margin-right: 14px; vertical-align: -2px; }
+/* 장식: 모서리를 채우는 손그림 꽃 · 동그라미 (화면 밖으로 잘려도 됨) */
+.s-deco.flower { right: -40px; top: -40px; width: 240px; height: 240px; border-radius: 50%; border: 3px solid var(--ink);
+  background: radial-gradient(circle, var(--accent5) 0 22%, var(--accent2) 23% 100%); box-shadow: 6px 6px 0 var(--ink); }
+.s-deco.blob { left: -50px; bottom: -50px; width: 200px; height: 200px; border-radius: 50%; border: 3px solid var(--ink); background: var(--accent4); box-shadow: 6px 6px 0 var(--ink); }
+.s-deco.panel, .s-deco.dots, .s-deco.bar, .s-deco.star, .s-deco.stripes, .s-deco.pills { display: none; }
+/* 강조 단어: 산호색은 작은 표시에만 — 글자는 숯색, 버터색 밑칠 */
+.s-h1 em, .s-h2 em, .s-h3 em, .s-lead em { color: var(--ink); background: linear-gradient(transparent 58%, var(--accent5) 58%); }

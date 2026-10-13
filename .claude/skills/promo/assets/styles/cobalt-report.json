@@ -1,0 +1,27 @@
+{
+  "name": "cobalt-report",
+  "title": "코발트 보고서",
+  "from": "Blue Professional (heygen-com/hyperframes frame-presets, Apache-2.0)",
+  "pick": "B2B · 업무 도구 · 금융처럼 믿음과 정돈이 먼저인 제품. 숫자 · 표가 많은 소개",
+  "avoid": "아이 · 게임 · 놀이처럼 가볍고 시끄러워야 하는 제품",
+  "motion": "신뢰 (craft.md) — 튕김 없이 짧게",
+  "token": { "dur": 21, "land": [0, 0, 0.2, 1] },
+  "fonts": {
+    "display": { "en": "Space Grotesk", "ko": "IBM Plex Sans KR", "weights": [600, 700] },
+    "body": { "en": "Inter", "ko": "IBM Plex Sans KR", "weights": [400, 500] },
+    "label": { "en": "Space Grotesk", "ko": "IBM Plex Sans KR", "weights": [600] }
+  },
+  "colors": {
+    "canvas": "#fdfae7",
+    "ink": "#111111",
+    "inkMuted": "#6b6b6b",
+    "accent": "#1e2bfa",
+    "onAccent": "#fdfae7",
+    "surface": { "from": "accent", "alpha": 0.04 },
+    "border": { "from": "accent", "alpha": 0.2 },
+    "positive": "#059669",
+    "negative": "#dc2626"
+  },
+  "remix": { "accents": ["accent"], "keep": ["positive", "negative"] },
+  "vars": { "--display-weight": 700, "--display-tracking": "-0.02em", "--body-weight": 400, "--r-card": "14px", "--r-pill": "100px", "--border-w": "1.5px" }
+}

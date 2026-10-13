@@ -1,0 +1,30 @@
+{
+  "name": "block-pop",
+  "title": "블록 팝",
+  "from": "BlockFrame (heygen-com/hyperframes frame-presets, Apache-2.0)",
+  "pick": "게임 · 소비자 앱 · 스타트업처럼 장난스럽고 에너지가 높은 제품. 짧은 티저",
+  "avoid": "의료 · 금융처럼 차분해야 하는 제품, 실제 화면 캡처가 대부분인 영상(굵은 테두리가 화면과 싸움)",
+  "motion": "대담 (craft.md) — 짧고 크게 튕김",
+  "token": { "dur": 18, "land": [0.16, 1, 0.3, 1] },
+  "fonts": {
+    "display": { "en": "Inter", "ko": "Black Han Sans", "weights": [800, 900] },
+    "body": { "en": "Inter", "ko": "Gothic A1", "weights": [500, 700] },
+    "label": { "en": "Space Grotesk", "ko": "Gothic A1", "weights": [700] }
+  },
+  "colors": {
+    "canvas": "#FFFDF5",
+    "canvas2": "#C0F7FE",
+    "ink": "#000000",
+    "inkMuted": "#000000",
+    "accent": "#FE90E8",
+    "accent2": "#99E885",
+    "accent3": "#F7CB46",
+    "accent4": "#FFDC8B",
+    "accent5": "#C0F7FE",
+    "onAccent": "#000000",
+    "surface": "#FFFFFF",
+    "border": "#000000"
+  },
+  "remix": { "accents": ["accent", "accent2", "accent3", "accent4", "accent5", "canvas2"], "keep": [] },
+  "vars": { "--display-weight": 900, "--display-case": "uppercase", "--display-tracking": "-0.03em", "--body-weight": 500, "--r-card": "0px", "--r-pill": "999px", "--border-w": "4px", "--shadow": "8px 8px 0 #000" }
+}
