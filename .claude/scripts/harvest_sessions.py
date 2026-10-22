@@ -230,7 +230,7 @@ def main() -> int:
             if datetime.fromtimestamp(f.stat().st_mtime, timezone.utc) >= since:
                 h.read(f, since)
 
-    skills_dir = ROOT / ".claude" / "skills"
+    skills_dir = Path(__file__).resolve().parent.parent / "skills"  # .claude/skills (kit 저장소에서는 claude/skills)
     names = [p.name for p in skills_dir.iterdir() if (p / "SKILL.md").is_file()] if skills_dir.is_dir() else []
     print(h.report(names, args.top))
     return 0
