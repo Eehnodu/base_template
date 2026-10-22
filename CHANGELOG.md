@@ -2,6 +2,12 @@
 
 템플릿은 파생 프로젝트에서 검증된 변경을 되가져오는 방식으로 갱신합니다. 날짜별로 무엇을 왜 바꿨는지만 적습니다.
 
+## 2026-10-22
+
+- 하네스 회고 장치 (Google Research Harness² 의 방법을 옮김: 모델은 그대로 두고, 실행 기록을 근거로 `.claude` 를 고치고, 효과를 다음 회고에서 판정). 새 스킬 `/retro`, 세션 기록 요약 `.claude/scripts/harvest_sessions.py`, 하네스 검사 `.claude/scripts/check_harness.py`(스킬 · 에이전트 머리말, 가리키는 파일, 훅 경로, 상시 문서 8,000자 상한), 기록 `zz_docs/HARNESS.md`.
+- 훅 `check_touched_file.py` 는 이번에 바뀐 줄만 알리고 주석 속 글자는 보지 않는다 (같은 줄이 한 세션에 13번씩 다시 잡히던 문제, 주석 속 색 코드 오탐). 새 훅 `hint_on_failure.py`(PostToolUseFailure)는 셸 따옴표 · heredoc 깨짐, cp949 인코딩, venv 아닌 python, PowerShell 경로의 `[ ]` 실패 뒤에 고치는 법 한 줄을 붙인다.
+- `CLAUDE.md` 11,583자 → 7,960자. `.claude/README.md` 와 겹치는 표 · 문장을 빼고 스킬 표는 상황 → 스킬 한 줄씩. `/teaser` · `/promo` 의 없는 `rules/frontend/copy.md` 참조를 고침.
+
 ## 2026-10-12
 
 - 반응형 기준 `.claude/rules/frontend/responsive.md` 추가. 휴대폰 · 패드 · 데스크톱 구간(Tailwind 기본)과 대표 기기, 휴대폰 먼저 쓰고 넓히기, lg 미만에서 바뀌는 배치(메뉴 · 사이드바 · 표 · 모달 · 필터), 기능을 휴대폰에서 숨기지 않기, hover 로만 되는 기능 금지 · 손가락 영역, 입력 · 가상 키보드 · IME, 안전 영역 · 가로 방향, 확인 폭(360 · 390 · 844×390 · 768 · 1024 · 1280). `CLAUDE.md` 규칙 표 · `conventions.md` · `design.md` · `/design` · `/test` · `fe-ui-builder` · `fe-ui-auditor` 에 연결 (game 프로젝트에서 되가져옴).
