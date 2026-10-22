@@ -122,6 +122,24 @@
 
 러너(pytest · vitest)가 없어서 지금은 Given / When / Then 케이스 + 수동 확인 절차까지 만든다. 러너 도입(2단계) 뒤 실제 테스트 작성으로 바뀐다.
 
+### `/retro` — 하네스 회고 (Harness²)
+
+```
+/retro
+/retro --days 30
+/retro --days 30 ../my-app      # base 에서 나온 다른 프로젝트 기록도 같이
+```
+
+Claude 가 같은 실수를 반복할 때, 기능 묶음을 끝냈을 때, 2주에 한 번쯤 부른다. 하는 일:
+
+1. 지난 회고에서 고친 것이 효과가 있었는지 숫자로 판정 (`zz_docs/HARNESS.md` 의 `확인 중` 행)
+2. 최근 대화 기록에서 반복된 실패 · 훅 차단 · "아니 · 왜 또" 같은 정정을 센다 (`.claude/scripts/harvest_sessions.py`)
+3. 여러 세션에 반복된 것만 골라 "근거 · 고칠 곳 · 이전 → 이후 · 다음에 볼 숫자" 표로 보여 준다. 근거가 없으면 "그대로 둠"
+4. **승인한 것만** 반영하고 `python .claude/scripts/check_harness.py` 로 깨진 곳이 없는지 확인
+5. `zz_docs/HARNESS.md` 에 기록 (교훈은 많아야 1개)
+
+자동으로 고치지 않는다. 수정안까지는 Claude 가, 반영 여부는 사람이 정한다. `.claude` 를 손으로 고친 뒤에도 `python .claude/scripts/check_harness.py` 한 번이면 스킬 머리말 · 없는 파일 참조 · 훅 경로 · `CLAUDE.md` 길이(8,000자 이하)를 검사한다.
+
 ## 4. 설명 · 비교 · 검토 요청 (016, 017, 018)
 
 | 요청 | 꼭 넣을 것 |
@@ -302,6 +320,7 @@ CLAUDE.md(규칙) → rules(주제별 규칙) → skills(절차) → agents(역�
 
 | 출처 | 장치 | base 적용 |
 | ---- | ---- | --------- |
+| Harness² (google-research/harness2, Apache-2.0) | 실행 기록 근거 하네스 수정 + 수정별 효과 판정 · 교훈 쌓기 (원본 미설치, OpenCode · Codex 전용이라 방법만) | `/retro` 스킬, `harvest_sessions.py`(대화 기록 = 실행 기록), `check_harness.py`(하네스 검사), `zz_docs/HARNESS.md`(수정 표 · 판정 · 교훈). 싼 형태부터 고르기(스킬 → 스크립트 → 에이전트 → 훅 → `CLAUDE.md`), 상시 문서 8,000자 상한, 반복 실패 뒤 안내 훅 `hint_on_failure.py`. **base 판단**: 자동 채택 대신 사람 승인, 후보를 여러 번 돌려 비교하는 단계는 비용 때문에 뺌 |
 | Superpowers | 규칙 한 줄(Iron Law) | `/fix` · `/debug` "원인 확정 전 수정 금지", `/verify` "이 작업 안에서 실행한 것만 통과" |
 | Superpowers | 합리화 표 (변명 → 실제) | CLAUDE.md 작업 원칙 밑 |
 | Superpowers | Ruling — 묻지 않고 내린 결정 기록 · 보고 | CLAUDE.md 원칙 11 + 완료 기준, 구현 스킬 보고 항목 |
