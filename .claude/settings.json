@@ -89,6 +89,17 @@
         ]
       }
     ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/hint_on_failure.py"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
