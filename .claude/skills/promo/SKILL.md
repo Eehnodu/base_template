@@ -154,7 +154,7 @@ export PW_FROM=<프로젝트에서 @playwright/test 가 깔린 폴더>   # 없�
 5. 최종: `node finish.mjs --name promo --poster <가장 강한 장면이 다 자리 잡은 프레임> --both` — 묶기(음악 판 · 음악 없는 판, H.264 · `yuv420p` · AAC · `+faststart`), 포스터 `promo.jpg`를 두 판의 0번째 프레임에 굽기(프레임을 바꾸고 추가하지 않음), `ffprobe`, 소리 싱크 측정, 컨택트 시트까지 한 번에.
 6. 두 판의 길이 · 해상도 · fps · 프레임 수가 같은지, 싱크가 0샘플인지 `finish.mjs` 출력으로 확인한다.
 7. 검수 1차에서 고친 뒤 2차를 부를 때도 같은 새 서브에이전트 규칙(수정 이력 안 넘김)을 지킨다.
-8. `share-copy.txt`: 1~3문장, 기능 이름과 구체적인 이득. `rules/frontend/copy.md` 해요체, 이모지 금지.
+8. `share-copy.txt`: 1~3문장, 기능 이름과 구체적인 이득. 해요체(`rules/frontend/design.md` 피할 문구), 이모지 금지.
 
 ## 보고
 
