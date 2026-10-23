@@ -7,7 +7,7 @@ allowed-tools: Read, Grep, Glob, Bash, Agent, Write
 
 # /security-audit — 보안 감사
 
-출처: Cloudflare [security-audit-skill](https://github.com/cloudflare/security-audit-skill) 의 `skills/security-audit/`, 커밋 `c1c8a8c`(2026-09-14), MIT 라이선스(이 폴더의 `LICENSE`). 참고 문서 13개 · `report-schema.json` · 검사 스크립트 2개 · 시험 2개는 원본 그대로다. 이 파일은 머리말과 아래 "이 저장소에서 쓰는 법"만 더했고, 그 아래는 원본 본문이다. 원본과 이 절이 어긋나 보이면 안전한 쪽(실행하지 않음 · 파일을 만들지 않음)을 따른다.
+출처: Cloudflare [security-audit-skill](https://github.com/cloudflare/security-audit-skill) 의 `skills/security-audit/`, 커밋 `c1c8a8c`(2026-09-14), MIT 라이선스(이 폴더의 `LICENSE`). 참고 문서 14개 · `report-schema.json` · 검사 스크립트 2개 · 시험 2개는 원본 그대로다. 이 파일은 머리말과 아래 "이 저장소에서 쓰는 법"만 더했고, 그 아래는 원본 본문이다. 원본과 이 절이 어긋나 보이면 안전한 쪽(실행하지 않음 · 파일을 만들지 않음)을 따른다.
 
 ## 이 저장소에서 쓰는 법
 

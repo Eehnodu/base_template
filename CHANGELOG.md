@@ -4,7 +4,7 @@
 
 ## 2026-10-23
 
-- 보안 감사 스킬 `/security-audit` 추가. Cloudflare 의 security-audit-skill(github.com/cloudflare/security-audit-skill, MIT, 커밋 `c1c8a8c` 2026-09-14)을 `.claude/skills/security-audit/` 에 그대로 넣었다 — 참고 문서 13개 · `report-schema.json` · 검사 스크립트 2개 · 시험 2개 · `LICENSE` 는 원본 그대로, `SKILL.md` 는 원본 본문 앞에 한국어 머리말과 "이 저장소에서 쓰는 법" 절만 더함. 기본은 보안 질문에 답하는 안내 모드, 명시하면 6단계 전체 감사(결과는 저장소 밖 `~/security-audit-skill/<repo>/run-N`). OS 샌드박스가 없는 Windows PC 에서는 대상 코드를 실행하지 않고 실행이 필요한 단서는 needs_validation 으로 남긴다. 원본의 research · general 에이전트는 `be-researcher` · `fe-researcher` · `security-reviewer` 로 대응. Windows node 에는 `O_NOFOLLOW` 가 없어 검사 스크립트 CLI 가 파일을 열지 않으므로 같은 검사 함수를 부르는 대체 명령을 적었다.
+- 보안 감사 스킬 `/security-audit` 추가. Cloudflare 의 security-audit-skill(github.com/cloudflare/security-audit-skill, MIT, 커밋 `c1c8a8c` 2026-09-14)을 `.claude/skills/security-audit/` 에 그대로 넣었다 — 참고 문서 14개 · `report-schema.json` · 검사 스크립트 2개 · 시험 2개 · `LICENSE` 는 원본 그대로, `SKILL.md` 는 원본 본문 앞에 한국어 머리말과 "이 저장소에서 쓰는 법" 절만 더함. 기본은 보안 질문에 답하는 안내 모드, 명시하면 6단계 전체 감사(결과는 저장소 밖 `~/security-audit-skill/<repo>/run-N`). OS 샌드박스가 없는 Windows PC 에서는 대상 코드를 실행하지 않고 실행이 필요한 단서는 needs_validation 으로 남긴다. 원본의 research · general 에이전트는 `be-researcher` · `fe-researcher` · `security-reviewer` 로 대응. Windows node 에는 `O_NOFOLLOW` 가 없어 검사 스크립트 CLI 가 파일을 열지 않으므로 같은 검사 함수를 부르는 대체 명령을 적었다.
 - `CLAUDE.md` 스킬 표에 한 줄(7,960자 → 7,940자), `.claude/README.md` · `README.md` · `zz_claude_guide.md` 에 사용법. 훅 · 권한은 그대로.
 
 ## 2026-10-22
