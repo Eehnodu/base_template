@@ -92,11 +92,12 @@ zz_docs/                       작업 기록 (CHANGELOG · TODO · LOGIC · HARN
 
 - `CLAUDE.md`: 늘 읽히는 총칙 (스택 · 명령 · 작업 흐름 · 완료 기준). 8,000자 이하로 유지한다
 - 규칙: 프론트 · 백엔드 · 글쓰기 (`.claude/rules/`)
-- 스킬 19개: 구현(`/feature` · `/design` · `/fullstack` · `/refactor`), 진단 · 점검(`/debug` · `/fix` · `/verify` · `/review` · `/audit` · `/challenge`), 문서 · 정리(`/docs` · `/pr` · `/handoff` · `/test`), 영상(`/teaser` · `/promo`), 기타(`/palette` · `/explore`), 하네스(`/retro`)
+- 스킬 20개: 구현(`/feature` · `/design` · `/fullstack` · `/refactor`), 진단 · 점검(`/debug` · `/fix` · `/verify` · `/review` · `/audit` · `/challenge`), 문서 · 정리(`/docs` · `/pr` · `/handoff` · `/test`), 영상(`/teaser` · `/promo`), 기타(`/palette` · `/explore`), 하네스(`/retro`), 보안(`/security-audit`)
 - 에이전트 11개: 조사 2 · 구현 4 · 점검 4 · 문서 1
 - 훅 8개: 민감 파일 · 위험 명령 차단, 유료 생성 API 호출 승인, 수정한 줄 검사, 반복 실패 뒤 안내, 검증 없이 종료 알림, 세션 시작 상태 주입, 검증 마커 기록(`mark_verified.py`, verifier 가 부름)
 - 하네스 도구 스크립트 2개: `.claude/scripts/harvest_sessions.py`(세션 기록 요약), `.claude/scripts/check_harness.py`(하네스 검사)
 - 하네스 회고: `/retro` 가 세션 기록에서 반복 실패 · 훅 차단 · 정정을 세어 `.claude` 수정안을 내고, 효과는 다음 회고에서 판정한다. 기록은 [zz_docs/HARNESS.md](zz_docs/HARNESS.md)
+- 보안 감사: `/security-audit` 는 Cloudflare 의 security-audit-skill(MIT)을 그대로 넣고 이 저장소 사용법을 더한 것이다. 기본은 보안 질문 · 영역 점검이고, "전체 보안 감사"라고 하면 6단계 감사 결과를 저장소 밖(`~/security-audit-skill/<repo>/run-N`)에 남긴다. 대상 코드는 실행 · 수정하지 않는다
 - `.claude` 를 고친 뒤에는 `python .claude/scripts/check_harness.py` 로 오류 0 을 확인한다
 - 구성은 [.claude/README.md](.claude/README.md), 요청하는 법과 설정 근거는 [zz_claude_guide.md](zz_claude_guide.md)
 

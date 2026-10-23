@@ -140,6 +140,20 @@ Claude 가 같은 실수를 반복할 때, 기능 묶음을 끝냈을 때, 2주�
 
 자동으로 고치지 않는다. 수정안까지는 Claude 가, 반영 여부는 사람이 정한다. `.claude` 를 손으로 고친 뒤에도 `python .claude/scripts/check_harness.py` 한 번이면 스킬 머리말 · 없는 파일 참조 · 훅 경로 · `CLAUDE.md` 길이(8,000자 이하)를 검사한다.
 
+### `/security-audit` — 보안 감사 · 보안 질문 (Cloudflare security-audit-skill)
+
+```
+/security-audit 로그인 · refresh 흐름에 세션 고정이나 토큰 재사용 구멍이 있어?
+/security-audit backend/app/module/admin 권한 확인 봐줘
+/security-audit 전체 보안 감사, quick 프로필로
+```
+
+- 그냥 부르면 **안내 모드**다. 질문 · 영역에 맞는 참고 문서만 읽고 답하며 파일을 만들지 않는다.
+- "전체 보안 감사", "펜테스트", "보고서로"라고 해야 6단계 전체 감사를 한다. 시작 전에 프로필(quick · standard · deep)과 부를 에이전트 수를 알려 준다. 결과는 저장소 밖 `~/security-audit-skill/<repo>/run-N` 에 남고 커밋하지 않는다.
+- 대상 코드를 실행하지 않는다 (회사 PC 에 원본이 요구하는 샌드박스가 없다). 실행해야 결론이 나는 것은 "확인 필요(needs_validation)"로 막힌 이유 · 확인 계획과 함께 온다. 배포된 서버에 요청을 보내지 않는다.
+- 결과는 확정 / 확인 필요 / 강화 메모로 나뉘고, 확정에만 심각도가 붙는다. 고칠 것은 하나씩 `/fix` 로 넘긴다.
+- 지금 바꾼 코드(diff)의 보안 확인은 `/review` 가 맡는다.
+
 ## 4. 설명 · 비교 · 검토 요청 (016, 017, 018)
 
 | 요청 | 꼭 넣을 것 |
@@ -320,6 +334,7 @@ CLAUDE.md(규칙) → rules(주제별 규칙) → skills(절차) → agents(역�
 
 | 출처 | 장치 | base 적용 |
 | ---- | ---- | --------- |
+| security-audit-skill (cloudflare/security-audit-skill, MIT, 커밋 c1c8a8c 2026-09-14) | 소스 근거 보안 감사: 안내 모드 / 6단계 전체 감사(정찰 → 커버리지 장부 · 헌터 → 독립 검증 → `findings.json` → 기록 재검증 → 보고서), confirmed · needs_validation · rejected 구분, 영역별 참고 문서 10개, JSON 스키마 · 검사 스크립트 | **원본을 그대로 넣음** — `/security-audit` 스킬 폴더에 참고 문서 13개 · 스키마 · 검사 스크립트 · 시험 · `LICENSE` 를 바꾸지 않고 두고, SKILL.md 에는 머리말과 "이 저장소에서 쓰는 법"만 더함. **base 판단**: 회사 Windows PC 에 OS 샌드박스가 없어 대상 코드를 실행하지 않음(원본 규칙대로 needs_validation), 결과는 저장소 밖, 원본 research · general 에이전트는 `be-researcher` · `fe-researcher` · `security-reviewer` 로, Windows 에서 검사 CLI 가 멈추는 것은 같은 검사 함수를 부르는 대체 명령으로 |
 | Harness² (google-research/harness2, Apache-2.0) | 실행 기록 근거 하네스 수정 + 수정별 효과 판정 · 교훈 쌓기 (원본 미설치, OpenCode · Codex 전용이라 방법만) | `/retro` 스킬, `harvest_sessions.py`(대화 기록 = 실행 기록), `check_harness.py`(하네스 검사), `zz_docs/HARNESS.md`(수정 표 · 판정 · 교훈). 싼 형태부터 고르기(스킬 → 스크립트 → 에이전트 → 훅 → `CLAUDE.md`), 상시 문서 8,000자 상한, 반복 실패 뒤 안내 훅 `hint_on_failure.py`. **base 판단**: 자동 채택 대신 사람 승인, 후보를 여러 번 돌려 비교하는 단계는 비용 때문에 뺌 |
 | Superpowers | 규칙 한 줄(Iron Law) | `/fix` · `/debug` "원인 확정 전 수정 금지", `/verify` "이 작업 안에서 실행한 것만 통과" |
 | Superpowers | 합리화 표 (변명 → 실제) | CLAUDE.md 작업 원칙 밑 |

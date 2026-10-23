@@ -145,14 +145,14 @@ base/
 
 ## 에이전트 · 스킬
 
-구현 스킬은 **요청 정리 → 조사 → 계획(필요하면 승인) → 실행 → 검증(`/verify`) → 기록 · 보고** 순서로 진행한다. 단계별 절차는 각 `SKILL.md`, 에이전트 역할 · 권한 · 모델은 `.claude/README.md`.
+구현 스킬은 위 작업 흐름 순서로 진행한다. 단계별 절차는 각 `SKILL.md`, 에이전트 역할 · 권한 · 모델은 `.claude/README.md`.
 
 | 상황 | 스킬 |
 | ---- | ---- |
 | 백엔드 기능 / 프론트 화면 / 둘 다 | `/feature` / `/design` / `/fullstack` |
 | 버그 원인만 / 고치기 | `/debug` / `/fix` (같은 문제 3회 실패면 멈춤) |
 | 동작을 바꾸지 않는 구조 개선 | `/refactor` |
-| 기계 검증 / diff 리뷰 / 화면 감사 | `/verify` / `/review` / `/audit` (셋 다 파일 수정 없음) |
+| 기계 검증 / diff 리뷰 / 화면 감사 / 보안 감사 · 질문 | `/verify` / `/review` / `/audit` / `/security-audit` (모두 파일 수정 없음) |
 | 색 토큰 / 테스트 케이스 / 문서 / 커밋 · PR / 인수인계 | `/palette` / `/test` / `/docs` / `/pr` / `/handoff` |
 | 외부 레포 분석 / 설계 반론 | `/explore` / `/challenge` |
 | 홍보 영상 15~25초 / 30~60초 | `/teaser` / `/promo` (결과는 `video-output/`, 게시 · 유료 API 없음) |

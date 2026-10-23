@@ -25,11 +25,11 @@
 ```
 
 - 구현은 `/feature`(백엔드) · `/design`(프론트) · `/fullstack`. 스킬이 researcher → builder 순으로 에이전트를 부르고, 마지막에 `/verify`를 거친다.
-- 점검은 셋으로 나뉜다. `/verify`는 명령 · grep 규칙 · 계약 대조(기계적), `/review`는 diff의 버그 · 회귀 · 보안(의미), `/audit`은 화면 단위 UI 품질. 셋 다 파일을 고치지 않는다.
+- 점검은 셋으로 나뉜다. `/verify`는 명령 · grep 규칙 · 계약 대조(기계적), `/review`는 diff의 버그 · 회귀 · 보안(의미), `/audit`은 화면 단위 UI 품질. 셋 다 파일을 고치지 않는다. 코드베이스 전체 · 영역 단위 보안 감사와 보안 질문은 `/security-audit`(대상 코드를 실행 · 수정하지 않음).
 - 에이전트에는 담당 파일 · 계약 · 수용 기준만 넘긴다. 히스토리 · diff 원문을 붙이지 않는다.
 - 끝나면 `zz_docs/`(CHANGELOG · TODO · LOGIC)를 갱신하고 CLAUDE.md "완료 기준"대로 보고한다.
 
-## 스킬 19개
+## 스킬 20개
 
 | 묶음 | 스킬 | 한 줄 |
 | ---- | ---- | ----- |
@@ -39,6 +39,7 @@
 | 영상 | `/teaser` `/promo` | 15~25초 짧은 홍보 영상 / 30~60초 기능 소개 영상 (HTML 프레임 + ffmpeg, 결과는 `video-output/`, 게시 · 유료 API 없음) |
 | 기타 | `/palette` `/explore` | 색 토큰 설계 + 대비 검사 / 외부 레포 분석 후 가져올지 판단 |
 | 하네스 | `/retro` | 세션 기록에서 반복 실패 · 훅 차단 · 정정을 찾아 `.claude` 수정안 → 승인 → 반영 → 다음 회고에서 효과 판정 (`zz_docs/HARNESS.md`) |
+| 보안 | `/security-audit` | 보안 질문 · 영역 점검(기본, 파일 안 만듦) / 명시하면 6단계 전체 감사 → 결과는 저장소 밖 `~/security-audit-skill/<repo>/run-N`. Cloudflare security-audit-skill(MIT) 원본 + 이 저장소 사용법 절 |
 
 경계가 헷갈리는 쌍은 각 SKILL.md description 끝에 적혀 있다 (예: `/debug`는 진단만, 수정은 `/fix`).
 
